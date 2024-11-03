@@ -1,0 +1,55 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.App-body {
+  display: flex;
+  flex: 1;
+}
+
+.content {
+  flex: 1;
+  padding: 0;
+}
+
+.App-header {
+  height: 60px; /* Ajusta el alto del header */
+  background-color: #606060;
+}
+
+.logo {
+  font-size: 2em;
+  font-weight: bold;
+  margin-right: auto;
+  padding-left: 10px;
+  color: #ffffff;
+}
+
+.search-bar {
+  width: 30%; /* Asegúrate de que ocupe todo el ancho disponible */
+  display: flex;
+  justify-content: center; /* Centra el contenido horizontalmente */
+}
+
+.form-control {
+  background-color: #3E3E3E !important; /* Fondo oscuro */
+  color: #7C7C7C !important; /* Texto claro */
+  border-radius: 15px !important; /* Bordes redondeados */
+  border: none !important; /* Sin borde */
+}
+
+.form-control::placeholder {
+  color: #ced4da !important; /* Color claro para el placeholder */
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icons i {
+  color: #d9d9d9;
+  font-size: 1.2em;
+}

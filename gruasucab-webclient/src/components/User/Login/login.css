@@ -1,0 +1,34 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;  /* Altura mínima para centrar el contenido verticalmente */
+  }
+  
+  .login-container .card {
+    border: none;
+    border-radius: 12px;  /* Bordes redondeados */
+    background: #fff;    /* Fondo blanco */
+  }
+  
+  .login-container h1 {
+    color: #343a40;  /* Color del título */
+  }
+  
+  .login-container .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .login-container .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+  
+  .login-container .form-control-lg {
+    border-radius: 8px;  /* Bordes redondeados para campos de entrada */
+  }
+  
+  .shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Sombra para la tarjeta */
+  }

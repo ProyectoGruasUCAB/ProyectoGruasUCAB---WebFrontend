@@ -1,0 +1,61 @@
+.ListGroup.Item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .bg-light {
+    background-color: #f8f9fa;
+  }
+
+  .add-operator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;  /* Altura mínima para centrar el contenido verticalmente */
+  }
+  
+  .add-operator-container .card {
+    border: none;
+    border-radius: 12px;  /* Bordes redondeados */
+    background: #fff;    /* Fondo blanco */
+  }
+  
+  .add-operator-container h1 {
+    color: #343a40;  /* Color del título */
+  }
+  
+  .add-operator-container .btn-primary {
+    background-color: #37b4e3;
+    border-color: #37b4e3;
+  }
+  
+  .btn-primario {
+    background-color: #37b4e3;
+    border-color: #37b4e3;
+  }
+
+  .btn-buscar {
+    background-color: #007935;
+    border-color: #007935;
+  }
+
+  .add-operator-container .btn-primary:hover {
+    background-color: #37b4e3;
+    border-color: #37b4e3;
+  }
+  
+  .add-operator-container .form-control-lg {
+    border-radius: 8px;  /* Bordes redondeados para campos de entrada */
+  }
+  
+  .shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Sombra para la tarjeta */
+  }
+  
+  .form-control-operator {
+    background-color: #ebecec !important; /* Fondo oscuro */
+    color: #3a3a3a !important; /* Texto claro */
+    border-radius: 15px !important; /* Bordes redondeados */
+    border: #b8b9b9 !important; /* Sin borde */
+  }
