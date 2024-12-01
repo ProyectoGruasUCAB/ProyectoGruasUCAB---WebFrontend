@@ -1,0 +1,6 @@
+.sbar {
+    background-color: #3E3E3E !important; /* Fondo oscuro */
+    color: #7C7C7C !important; /* Texto claro */
+    border-radius: 15px !important; /* Bordes redondeados */
+    border: none !important; /* Sin borde */
+  }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/UI/Header';
 import Sidebar from './components/UI/Sidebar';
@@ -13,15 +13,36 @@ import Servicios from './components/RoadServices/roadservices';
 import Department from './components/Department/department';
 import Notification from './components/Notifications/notifications';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginForm from './components/User/Login/login';
-import AddOperator from './components/Operator/addOpeator';
+import AddUser from './components/User/AddUser/addUser';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [userName, setUserName] = useState('');
 
-  const handleLogin = () => {
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setIsLoggedIn(true);
+      setUserRole(user.role);
+      setUserName(user.email);
+    }
+  }, []);
+
+  const handleLogin = (user) => {
     setIsLoggedIn(true);
+    setUserRole(user.role);
+    setUserName(user.email); // Usamos el email como nombre de usuario por simplicidad
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserRole('');
+    setUserName('');
+    localStorage.removeItem('user'); // Elimina la información del usuario de localStorage
   };
 
   return (
@@ -29,9 +50,9 @@ function App() {
       <div className="App">
         {isLoggedIn ? (
           <div>
-            <Header />
+            <Header userName={userName} onLogout={handleLogout} />
             <div className="App-body d-flex">
-              <Sidebar />
+              <Sidebar role={userRole} />
               <div className="content">
                 <Routes>
                   <Route path="/orders" element={<Orders/>} />
@@ -44,16 +65,16 @@ function App() {
                   <Route path="/servicios" element={<Servicios/>} />
                   <Route path="/departments" element={<Department/>} />
                   <Route path="/notifications" element={<Notification/>} />
-                  <Route path="/Login" element={<LoginForm/>} />
-                  <Route path="/addOperator" element={<AddOperator/>} />
+                  <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
+                  <Route path="/addUser/:role" element={<AddUser />} />
                   <Route path="*" element={<Navigate to="/orders" replace/>} />
                 </Routes>  
               </div>
             </div>
           </div>
-        ):(
-        <LoginForm onLogin={handleLogin} />
-      )}
+        ) : (
+          <LoginForm onLogin={handleLogin} />
+        )}
       </div>
     </Router>
   );

@@ -12,7 +12,7 @@ const initialItems = [
 function Vehicle() {
     return (
         <div>
-            <ShowList title = "Vehiculos" initialItems={initialItems}/>
+            <ShowList title = "Vehiculos" role="Vehiculo" initialItems={initialItems}/>
         </div>
     );
 }

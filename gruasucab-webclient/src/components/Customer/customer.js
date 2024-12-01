@@ -12,7 +12,7 @@ const initialItems = [
 function Customer() {
     return (
         <div>
-            <ShowList title = "Clientes" initialItems={initialItems}/>
+            <ShowList title = "Clientes" role="Cliente" initialItems={initialItems}/>
         </div>
     );
 }

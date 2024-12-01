@@ -9,11 +9,10 @@ const initialItems = [
     { id: 5, name: "Operador 5"} ,
 ];
 
-
 function Operator() {
     return (
         <div>
-            <ShowList title = "Operadores" initialItems={initialItems}/>
+            <ShowList title="Operadores" role="Operador" initialItems={initialItems} />
         </div>
     );
 }

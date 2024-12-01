@@ -13,7 +13,7 @@ const initialItems = [
 function Suplier() {
     return (
         <div>
-            <ShowList title = "Proveeores" initialItems={initialItems}/>
+            <ShowList title = "Proveeores" role="Proveedor" initialItems={initialItems}/>
         </div>
     );
 }

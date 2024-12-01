@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Form, FormControl, ListGroup, Container, Row, Col } from 'react-bootstrap';
-import './showListCustom.css';
 import { useNavigate } from "react-router-dom";
+import './showListCustom.css';
 
-function ShowList({ title, initialItems }) {
+function ShowList({ title, role, initialItems }) {
     const [items] = useState(initialItems);
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
@@ -17,15 +17,15 @@ function ShowList({ title, initialItems }) {
 
     const handleEdit = (id) => {
         console.log('Edit ' + title + ' with id:' + id);
-    }
+    };
 
     const handleDelete = (id) => {
         console.log(items.filter(item => item.id === id));
-    }
+    };
 
-    const handleAddSupplier = () => {
-        navigate('/add' + title);
-    }
+    const handleAddUser = () => {
+        navigate(`/addUser/${role}`);
+    };
 
     return (
         <Container>
@@ -34,7 +34,7 @@ function ShowList({ title, initialItems }) {
                     <h1>{title}</h1>
                 </Col>
                 <Col xs="auto">
-                    <Button className="btn-primario" onClick={handleAddSupplier}>Agregar {title}</Button>
+                    <Button className="btn-primario" onClick={handleAddUser}>Agregar {title}</Button>
                 </Col>
                 <Col xs='auto ms-auto d-flex'>
                     <Form className="d-flex">
@@ -77,6 +77,7 @@ function ShowList({ title, initialItems }) {
 // Validación de props
 ShowList.propTypes = {
     title: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
     initialItems: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired

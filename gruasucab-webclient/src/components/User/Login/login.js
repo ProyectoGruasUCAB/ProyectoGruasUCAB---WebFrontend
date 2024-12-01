@@ -2,14 +2,30 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import './login.css';
 
-function Login({onLogin}) {
+function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Lista de usuarios simulada con roles
+  const users = [
+    { email: 'admin@example.com', password: 'adminpass', role: 'admin' },
+    { email: 'operator@example.com', password: 'operatorpass', role: 'operator' },
+    { email: 'provider@example.com', password: 'providerpass', role: 'provider' },
+  ];
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para manejar el login
-    console.log('Iniciar sesión:', { email, password });
+    
+    // Lógica simple de autenticación
+    const user = users.find(user => user.email === email && user.password === password);
+    if (user) {
+      console.log('Iniciar sesión:', { email, password, role: user.role });
+      localStorage.setItem('user', JSON.stringify(user)); // Guardar la información del usuario en localStorage
+      onLogin(user); // Pasar el usuario completo al callback onLogin
+    } else {
+      console.log('Credenciales incorrectas');
+      alert('Correo o contraseña incorrectos');
+    }
   };
 
   return (
@@ -38,7 +54,7 @@ function Login({onLogin}) {
                 className="form-control-lg"
               />
             </Form.Group>
-            <Button onClick={onLogin} variant="primary" type="submit" className="btn-lg w-100">
+            <Button variant="primary" type="submit" className="btn-lg w-100">
               Iniciar Sesión
             </Button>
           </Form>
@@ -47,9 +63,5 @@ function Login({onLogin}) {
     </Container>
   );
 }
-/*
-Login.propTypes = {
-  onLogin: PropTypes.func.isRequired,
-};*/
 
 export default Login;

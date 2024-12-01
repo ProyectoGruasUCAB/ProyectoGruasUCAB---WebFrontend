@@ -12,7 +12,7 @@ const initialItems = [
 function Driver() {
     return (
         <div>
-            <ShowList title = "Conductores" initialItems={initialItems}/>
+            <ShowList title = "Conductores" role="Conductor" initialItems={initialItems}/>
         </div>
     );
 }
