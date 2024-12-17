@@ -6,7 +6,6 @@ import './orderBox.css'
 
 function Orders() {
 
-    const whatsappLocationUrl = "https://maps.google.com/maps?q=10.445251%2C-66.8032893&z=17&hl=es"
 
     const orders = [
         {id: 1, name: "Order1", description: "Descripcion de la orden 1"},
@@ -17,7 +16,7 @@ function Orders() {
             <OrderBar />
             <div className="flex-grow-1 p-3">
                 <h1>Ordenes</h1>
-                <MapContainer locationUrl={whatsappLocationUrl} />
+                <MapContainer/>
                 <OrderBox orders={orders}/>
             </div>
         </div>

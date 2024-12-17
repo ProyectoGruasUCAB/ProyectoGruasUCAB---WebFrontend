@@ -35,48 +35,48 @@ function App() {
   const handleLogin = (user) => {
     setIsLoggedIn(true);
     setUserRole(user.role);
-    setUserName(user.email); // Usamos el email como nombre de usuario por simplicidad
+    setUserName(user.email);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserRole('');
     setUserName('');
-    localStorage.removeItem('user'); // Elimina la información del usuario de localStorage
+    localStorage.removeItem('user');
   };
 
   return (
-    <Router>
-      <div className="App">
-        {isLoggedIn ? (
-          <div>
-            <Header userName={userName} onLogout={handleLogout} />
-            <div className="App-body d-flex">
-              <Sidebar role={userRole} />
-              <div className="content">
-                <Routes>
-                  <Route path="/orders" element={<Orders/>} />
-                  <Route path="/operators" element={<Operator/>} />
-                  <Route path="/supliers" element={<Suplier/>} />
-                  <Route path="/drivers" element={<Driver/>} />
-                  <Route path="/customers" element={<Customer/>} />
-                  <Route path="/vehicles" element={<Vehicle/>} />
-                  <Route path="/policies" element={<Policies/>} />
-                  <Route path="/servicios" element={<Servicios/>} />
-                  <Route path="/departments" element={<Department/>} />
-                  <Route path="/notifications" element={<Notification/>} />
-                  <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
-                  <Route path="/addUser/:role" element={<AddUser />} />
-                  <Route path="*" element={<Navigate to="/orders" replace/>} />
-                </Routes>  
+      <Router>
+        <div className="App">
+          {isLoggedIn ? (
+            <div>
+              <Header userName={userName} onLogout={handleLogout} />
+              <div className="App-body d-flex">
+                <Sidebar role={userRole} />
+                <div className="content">
+                  <Routes>
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/operators" element={<Operator />} />
+                    <Route path="/supliers" element={<Suplier />} />
+                    <Route path="/drivers" element={<Driver />} />
+                    <Route path="/customers" element={<Customer />} />
+                    <Route path="/vehicles" element={<Vehicle />} />
+                    <Route path="/policies" element={<Policies />} />
+                    <Route path="/servicios" element={<Servicios />} />
+                    <Route path="/departments" element={<Department />} />
+                    <Route path="/notifications" element={<Notification />} />
+                    <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
+                    <Route path="/addUser/:role" element={<AddUser />} />
+                    <Route path="*" element={<Navigate to="/orders" replace />} />
+                  </Routes>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <LoginForm onLogin={handleLogin} />
-        )}
-      </div>
-    </Router>
+          ) : (
+            <LoginForm onLogin={handleLogin} />
+          )}
+        </div>
+      </Router>
   );
 }
 

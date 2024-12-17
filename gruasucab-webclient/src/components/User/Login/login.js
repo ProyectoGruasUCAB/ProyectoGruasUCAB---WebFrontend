@@ -8,14 +8,14 @@ function Login({ onLogin }) {
 
   // Lista de usuarios simulada con roles
   const users = [
-    { email: 'admin@example.com', password: 'adminpass', role: 'admin' },
-    { email: 'operator@example.com', password: 'operatorpass', role: 'operator' },
-    { email: 'provider@example.com', password: 'providerpass', role: 'provider' },
+    { email: 'admin@example.com', password: 'adminpass', role: 'Administrador' },
+    { email: 'operator@example.com', password: 'operatorpass', role: 'Operador' },
+    { email: 'provider@example.com', password: 'providerpass', role: 'Proveedor' },
   ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Lógica simple de autenticación
     const user = users.find(user => user.email === email && user.password === password);
     if (user) {
