@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import './login.css';
 
 function Login({ onLogin }) {
@@ -8,9 +9,9 @@ function Login({ onLogin }) {
 
   // Lista de usuarios simulada con roles
   const users = [
-    { email: 'admin@example.com', password: 'adminpass', role: 'Administrador' },
-    { email: 'operator@example.com', password: 'operatorpass', role: 'Operador' },
-    { email: 'provider@example.com', password: 'providerpass', role: 'Proveedor' },
+    { email: 'admin@example.com', password: 'adminpass', role: 'Administrador', name: 'Nombre1', lastname: 'Apellido1', cedulaNumber: '12345678', phoneNumber: '04141234567'},
+    { email: 'operator@example.com', password: 'operatorpass', role: 'Operador', name: 'Nombre2', lastname: 'Apellido2', cedulaNumber: '12345678', phoneNumber: '04141234567'},
+    { email: 'provider@example.com', password: 'providerpass', role: 'Proveedor', name: 'Nombre3', lastname: 'Apellido3', cedulaNumber: '12345678', phoneNumber: '04141234567'},
   ];
 
   const handleSubmit = (e) => {
@@ -58,6 +59,9 @@ function Login({ onLogin }) {
               Iniciar Sesión
             </Button>
           </Form>
+          <div className="text-center mt-3">
+            <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
+          </div>
         </Card.Body>
       </Card>
     </Container>

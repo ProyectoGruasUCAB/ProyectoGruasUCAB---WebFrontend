@@ -16,7 +16,7 @@ function ShowList({ title, role, initialItems }) {
     const filteredItems = items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
 
     const handleEdit = (id) => {
-        console.log('Edit ' + title + ' with id:' + id);
+        navigate(`/editUser/${role}/${id}`);
     };
 
     const handleDelete = (id) => {

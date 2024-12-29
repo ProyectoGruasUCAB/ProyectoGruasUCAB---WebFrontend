@@ -1,0 +1,89 @@
+import React, { useState, useEffect } from 'react';
+import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const UserProfile = () => {
+    const [user, setUser] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (userData) {
+            setUser(userData);
+        }
+    }, []);
+
+    const handleShowModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+
+    const handleChangePassword = (e) => {
+        e.preventDefault();
+        // Aquí podrías añadir lógica para cambiar la contraseña, por ejemplo, llamando a una API
+        console.log('Nueva contraseña:', newPassword);
+        handleCloseModal();
+    };
+
+    return (
+        <Container className="mt-5 d-flex justify-content-center">
+            <div style={{ maxWidth: '600px', width: '100%' }}>
+                <h2 className="text-center mb-4">Perfil de Usuario</h2>
+                <Card className="shadow-sm p-4">
+                    <div className="mb-3">
+                        <label className="form-label">Nombre:</label>
+                        <p>{user.name}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Apellido:</label>
+                        <p>{user.lastname}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Correo Electrónico:</label>
+                        <p>{user.email}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Número de Cédula:</label>
+                        <p>{user.cedulaNumber}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Número de Teléfono:</label>
+                        <p>{user.phoneNumber}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Rol:</label>
+                        <p>{user.role}</p>
+                    </div>
+                    <div className="d-flex justify-content-start">
+                        <Button variant="outline-secondary" onClick={handleShowModal}>
+                            Cambiar Contraseña
+                        </Button>
+                    </div>
+                </Card>
+                <Modal show={showModal} onHide={handleCloseModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Cambiar Contraseña</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleChangePassword}>
+                            <Form.Group className="mb-3" controlId="formNewPassword">
+                                <Form.Label>Nueva Contraseña</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Ingresa la nueva contraseña"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                />
+                            </Form.Group>
+                            <Button variant="primary" type="submit">
+                                Cambiar Contraseña
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+            </div>
+        </Container>
+    );
+};
+
+export default UserProfile;

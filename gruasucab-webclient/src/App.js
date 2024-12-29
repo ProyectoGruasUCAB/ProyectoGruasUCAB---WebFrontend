@@ -16,11 +16,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginForm from './components/User/Login/login';
 import AddUser from './components/User/AddUser/addUser';
+import EditUser from './components/User/EditUser/editUser';
+import UserProfile from './components/User/UserProfile/userProfile';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState('');
-  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -28,29 +30,49 @@ function App() {
       const user = JSON.parse(storedUser);
       setIsLoggedIn(true);
       setUserRole(user.role);
-      setUserName(user.email);
+      setUserEmail(user.email);
     }
   }, []);
 
   const handleLogin = (user) => {
     setIsLoggedIn(true);
     setUserRole(user.role);
-    setUserName(user.email);
+    setUserEmail(user.email);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserRole('');
-    setUserName('');
+    setUserEmail('');
     localStorage.removeItem('user');
   };
+
+
+const getUserData = async (id) => {
+    // Simulación de una llamada a la API
+    const response = await fetch(`https://api.example.com/users/${id}`);
+    const data = await response.json();
+    return data;
+};
+
+const updateUser = async (id, userData) => {
+    // Simulación de una llamada a la API
+    await fetch(`https://api.example.com/users/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+};
+
 
   return (
       <Router>
         <div className="App">
           {isLoggedIn ? (
             <div>
-              <Header userName={userName} onLogout={handleLogout} />
+              <Header userName={userEmail} onLogout={handleLogout} />
               <div className="App-body d-flex">
                 <Sidebar role={userRole} />
                 <div className="content">
@@ -67,7 +89,9 @@ function App() {
                     <Route path="/notifications" element={<Notification />} />
                     <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
                     <Route path="/addUser/:role" element={<AddUser />} />
+                    <Route path="/editUser/:role/:id" element={<EditUser getUserData={getUserData} updateUser={updateUser} />} />
                     <Route path="*" element={<Navigate to="/orders" replace />} />
+                    <Route path="/profile" element={<UserProfile/>}/>
                   </Routes>
                 </div>
               </div>

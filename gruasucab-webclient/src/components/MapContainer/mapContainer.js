@@ -3,7 +3,8 @@ import InputComponent from "./inputComponent";
 import MapComponent from "./mapComponent";
 
 const MapContainer = () => {
-  const [origin, setOrigin] = useState({ lat: 10.48801, lng: -66.87919 });
+
+  const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [path, setPath] = useState([]);
 
@@ -39,7 +40,7 @@ const MapContainer = () => {
           Agregar
         </button>
       </div>
-      <MapComponent origin={origin} destination={destination} path={path} />
+      <MapComponent origin={origin} destination={destination} path={path}/>
     </div>
   );
 };
