@@ -15,6 +15,10 @@ function ShowList({ title, role, initialItems }) {
 
     const filteredItems = items.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
 
+    const handleUserDetail = (id) => {
+        navigate(`/users/${role}/${id}`);
+    };
+    
     const handleEdit = (id) => {
         navigate(`/editUser/${role}/${id}`);
     };
@@ -59,7 +63,11 @@ function ShowList({ title, role, initialItems }) {
                                 className={index % 2 === 0 ? 'bg-light' : 'bg-white'}
                             >
                                 <Row>
-                                    <Col>{item.name}</Col>
+                                    <Col>
+                                        <Button variant="link" className="order-link" onClick={() => handleUserDetail(item.id)}>
+                                            {item.name}
+                                        </Button>
+                                    </Col>
                                     <Col className="text-end">
                                         <Button variant="warning" className="ms-2" onClick={() => handleEdit(item.id)}>Editar</Button>
                                         <Button variant="danger" className="ms-2" onClick={() => handleDelete(item.id)}>Eliminar</Button>

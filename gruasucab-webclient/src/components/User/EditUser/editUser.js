@@ -39,26 +39,30 @@ const EditUser = ({ getUserData, updateUser }) => {
             <div style={{ maxWidth: '600px', width: '100%' }}>
                 <h2 className="text-center mb-4">Editar {role}</h2>
                 <div className="card shadow-sm p-4">
-                    <form onSubmit={handleSubmit}>
-                        {fields.map((field, index) => (
-                            <div key={index} className="mb-3">
-                                <label htmlFor={field.name} className="form-label">{field.label}:</label>
-                                <input
-                                    type={field.type}
-                                    className="form-control"
-                                    placeholder={field.placeholder}
-                                    id={field.name}
-                                    name={field.name}
-                                    value={user[field.name]}
-                                    onChange={handleChange}
-                                    required={field.required}
-                                />
+                    {user ? (
+                        <form onSubmit={handleSubmit}>
+                            {fields.map((field, index) => (
+                                <div key={index} className="mb-3">
+                                    <label htmlFor={field.name} className="form-label">{field.label}:</label>
+                                    <input
+                                        type={field.type}
+                                        className="form-control"
+                                        placeholder={field.placeholder}
+                                        id={field.name}
+                                        name={field.name}
+                                        value={user[field.name] || ''}
+                                        onChange={handleChange}
+                                        required={field.required}
+                                    />
+                                </div>
+                            ))}
+                            <div className='d-flex justify-content-center'>
+                                <button type="submit" className="btn btn-primary w-50">Actualizar {role}</button>
                             </div>
-                        ))}
-                        <div className='d-flex justify-content-center'>
-                            <button type="submit" className="btn btn-primary w-50">Actualizar {role}</button>
-                        </div>
-                    </form>
+                        </form>
+                    ) : (
+                        <div>Loading...</div>
+                    )}
                 </div>
             </div>
         </div>

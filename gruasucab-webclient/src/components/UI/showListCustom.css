@@ -59,3 +59,13 @@
     border-radius: 15px !important; /* Bordes redondeados */
     border: #b8b9b9 !important; /* Sin borde */
   }
+
+  .order-link { 
+    text-decoration: none; 
+    color: #606060; 
+  }
+    
+  .order-link:hover { 
+    text-decoration: underline; 
+    color: #2c2c2c; 
+  }
