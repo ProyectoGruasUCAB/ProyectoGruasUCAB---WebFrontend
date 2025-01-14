@@ -1,31 +1,27 @@
+
+import { login } from '../../../api/apiLogin'; // Importa la función de login
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+
 import './login.css';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); // Estado para manejar errores
 
-  // Lista de usuarios simulada con roles
-  const users = [
-    { email: 'admin@example.com', password: 'adminpass', role: 'Administrador', name: 'Nombre1', lastname: 'Apellido1', cedulaNumber: '12345678', phoneNumber: '04141234567'},
-    { email: 'operator@example.com', password: 'operatorpass', role: 'Operador', name: 'Nombre2', lastname: 'Apellido2', cedulaNumber: '12345678', phoneNumber: '04141234567'},
-    { email: 'provider@example.com', password: 'providerpass', role: 'Proveedor', name: 'Nombre3', lastname: 'Apellido3', cedulaNumber: '12345678', phoneNumber: '04141234567'},
-  ];
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Lógica simple de autenticación
-    const user = users.find(user => user.email === email && user.password === password);
-    if (user) {
-      console.log('Iniciar sesión:', { email, password, role: user.role });
-      localStorage.setItem('user', JSON.stringify(user)); // Guardar la información del usuario en localStorage
+    try {
+      const user = await login(email, password);
+      console.log('Iniciar sesión:', user);
+      localStorage.setItem('authToken', user.token); // Guardar la información del usuario en localStorage
       onLogin(user); // Pasar el usuario completo al callback onLogin
-    } else {
-      console.log('Credenciales incorrectas');
-      alert('Correo o contraseña incorrectos');
+    } catch (error) {
+      console.error('Credenciales incorrectas', error);
+      setError('Correo o contraseña incorrectos');
     }
   };
 
@@ -55,6 +51,7 @@ function Login({ onLogin }) {
                 className="form-control-lg"
               />
             </Form.Group>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <Button variant="primary" type="submit" className="btn-lg w-100">
               Iniciar Sesión
             </Button>

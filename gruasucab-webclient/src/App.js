@@ -18,7 +18,7 @@ import LoginForm from './components/User/Login/login';
 import AddUser from './components/User/AddUser/addUser';
 import EditUser from './components/User/EditUser/editUser';
 import UserProfile from './components/User/UserProfile/userProfile';
-import api from './api';
+import { login } from './api/apiLogin'; // Importamos específicamente la función login
 import UserDetail from './components/User/userDetail';
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
 
   const getUserData = async (id) => {
     try {
-      const response = await api.get(`/users/${id}`);
+      const response = await login(`/users/${id}`); // Suponiendo que `login` es la función correcta o cambiando al endpoint correcto
       return response.data;
     } catch (error) {
       console.error('Error:', error);
@@ -61,7 +61,7 @@ function App() {
 
   const updateUser = async (id, userData) => {
     try {
-      await api.put(`/users/${id}`, userData);
+      await login.put(`/users/${id}`, userData); // Suponiendo que `login.put` es la función correcta o cambiando al método correcto
     } catch (error) {
       console.error('Error: ', error);
     }
