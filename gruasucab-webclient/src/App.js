@@ -18,8 +18,9 @@ import LoginForm from './components/User/Login/login';
 import AddUser from './components/User/AddUser/addUser';
 import EditUser from './components/User/EditUser/editUser';
 import UserProfile from './components/User/UserProfile/userProfile';
-import { login } from './api/apiLogin'; // Importamos específicamente la función login
+import { login, logout } from './api/api'; // Asegúrate de ajustar la ruta a tu api.js
 import UserDetail from './components/User/userDetail';
+import { UserProvider } from './components/User/Login/UserContext'; // Importa el UserProvider
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,11 +43,25 @@ function App() {
     setUserEmail(user.email);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const userEmail = localStorage.getItem('userEmail');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (userEmail && refreshToken) {
+      try {
+        await logout(userEmail, refreshToken);
+      } catch (error) {
+        console.error('Error al cerrar sesión', error);
+      }
+    }
+
     setIsLoggedIn(false);
     setUserRole('');
     setUserEmail('');
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userEmail');
   };
 
   const getUserData = async (id) => {
@@ -68,40 +83,42 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="App">
-        {isLoggedIn ? (
-          <div>
-            <Header userName={userEmail} onLogout={handleLogout} />
-            <div className="App-body d-flex">
-              <Sidebar role={userRole} />
-              <div className="content">
-                <Routes>
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/operators" element={<Operator />} />
-                  <Route path="/supliers" element={<Suplier />} />
-                  <Route path="/drivers" element={<Driver />} />
-                  <Route path="/customers" element={<Customer />} />
-                  <Route path="/vehicles" element={<Vehicle />} />
-                  <Route path="/policies" element={<Policies />} />
-                  <Route path="/servicios" element={<Servicios />} />
-                  <Route path="/departments" element={<Department />} />
-                  <Route path="/notifications" element={<Notification />} />
-                  <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
-                  <Route path='/users/:role/:id' element={<UserDetail />} />
-                  <Route path="/addUser/:role" element={<AddUser />} />
-                  <Route path="/editUser/:role/:id" element={<EditUser getUserData={getUserData} updateUser={updateUser} />} />
-                  <Route path="*" element={<Navigate to="/orders" replace />} />
-                  <Route path="/profile" element={<UserProfile />} />
-                </Routes>
+    <UserProvider>
+      <Router>
+        <div className="App">
+          {isLoggedIn ? (
+            <div>
+              <Header onLogout={handleLogout} />
+              <div className="App-body d-flex">
+                <Sidebar role={userRole} />
+                <div className="content">
+                  <Routes>
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/operators" element={<Operator />} />
+                    <Route path="/supliers" element={<Suplier />} />
+                    <Route path="/drivers" element={<Driver />} />
+                    <Route path="/customers" element={<Customer />} />
+                    <Route path="/vehicles" element={<Vehicle />} />
+                    <Route path="/policies" element={<Policies />} />
+                    <Route path="/servicios" element={<Servicios />} />
+                    <Route path="/departments" element={<Department />} />
+                    <Route path="/notifications" element={<Notification />} />
+                    <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
+                    <Route path='/users/:role/:id' element={<UserDetail />} />
+                    <Route path="/addUser/:role" element={<AddUser />} />
+                    <Route path="/editUser/:role/:id" element={<EditUser getUserData={getUserData} updateUser={updateUser} />} />
+                    <Route path="*" element={<Navigate to="/orders" replace />} />
+                    <Route path="/profile" element={<UserProfile />} />
+                  </Routes>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <LoginForm onLogin={handleLogin} />
-        )}
-      </div>
-    </Router>
+          ) : (
+            <LoginForm onLogin={handleLogin} />
+          )}
+        </div>
+      </Router>
+    </UserProvider>
   );
 }
 

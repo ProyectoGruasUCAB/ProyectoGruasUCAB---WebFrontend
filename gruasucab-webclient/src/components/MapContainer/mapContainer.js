@@ -1,46 +1,47 @@
-import React, { useState } from "react";
-import InputComponent from "./inputComponent";
+import React, { useState, useEffect } from "react";
 import MapComponent from "./mapComponent";
 
-const MapContainer = () => {
-
-  const [origin, setOrigin] = useState(null);
-  const [destination, setDestination] = useState(null);
+const MapContainer = ({ origin, destination, driver }) => {
   const [path, setPath] = useState([]);
 
-  const handleRoute = () => {
-    if (origin && destination) {
-      const directionsService = new window.google.maps.DirectionsService();
-      directionsService.route(
-        {
-          origin: origin,
-          destination: destination,
-          travelMode: window.google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === window.google.maps.DirectionsStatus.OK) {
-            const newPath = result.routes[0].overview_path.map(point => ({
-              lat: point.lat(),
-              lng: point.lng(),
-            }));
-            setPath(newPath);
-          } else {
-            console.error(`Error fetching directions ${status}`);
+  useEffect(() => {
+    const handleRoute = () => {
+      if (origin && destination) {
+        const directionsService = new window.google.maps.DirectionsService();
+        directionsService.route(
+          {
+            origin: origin,
+            destination: destination,
+            travelMode: window.google.maps.TravelMode.DRIVING,
+          },
+          (result, status) => {
+            if (status === window.google.maps.DirectionsStatus.OK) {
+              const newPath = result.routes[0].overview_path.map(point => ({
+                lat: point.lat(),
+                lng: point.lng(),
+              }));
+              setPath(newPath);
+            } else {
+              console.error(`Error fetching directions ${status}`);
+            }
           }
-        }
-      );
+        );
+      }
+    };
+
+    handleRoute();
+  }, [origin, destination]);
+
+  useEffect(() => {
+    if (driver) {
+      console.log("Ubicación del conductor en MapContainer:", driver);
     }
-  };
+  }, [driver]);
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
-        <InputComponent setOrigin={setOrigin} setDestination={setDestination} />
-        <button onClick={handleRoute} style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', marginLeft: '10px' }}>
-          Agregar
-        </button>
-      </div>
-      <MapComponent origin={origin} destination={destination} path={path}/>
+    <div className="map-content">
+      {console.log("Pasando la ubicación del conductor a MapComponent:", driver)}
+      <MapComponent origin={origin} destination={destination} driver={driver} path={path} />
     </div>
   );
 };

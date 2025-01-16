@@ -12,7 +12,7 @@ const initialItems = [
 function Operator() {
     return (
         <div>
-            <ShowList title="Operadores" role="Operador" initialItems={initialItems} />
+            <ShowList title="Operadores" role="Trabajador" initialItems={initialItems} />
         </div>
     );
 }

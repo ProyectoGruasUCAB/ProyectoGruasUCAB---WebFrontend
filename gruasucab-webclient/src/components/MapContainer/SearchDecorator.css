@@ -1,0 +1,81 @@
+.d-flex {
+    display: flex;
+  }
+  
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+  
+  .p-3 {
+    padding: 1rem; /* Bootstrap-like padding */
+  }
+  
+  .order-bar {
+    width: 250px; /* Ajusta el ancho según sea necesario */
+    background-color: #f8f9fa; /* Color de fondo */
+    padding: 15px; /* Espaciado interno */
+    border-right: 1px solid #ddd; /* Borde derecho */
+    height: 100%; /* Asegúrate de que la barra ocupe toda la altura del contenedor */
+  }
+  
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #a5a5a5; /* Texto más claro */
+  }
+  
+  .service-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .service-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .service-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .service-radio {
+    margin-right: 10px;
+  }
+  
+  .add-order-button { 
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #086b33;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .add-order-button:hover {
+    background-color: #04381a;
+  }
+  D
+  .client-item {
+    display: none; /* Ocultar la lista de clientes */
+  }
+  
+  

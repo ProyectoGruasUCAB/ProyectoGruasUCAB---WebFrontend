@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ShowList from "../UI/showList";
+import { getAllDrivers } from "../../api/api";
 
-const initialItems = [
-    { id: 1, name: "Conductor 1"} ,
-    { id: 3, name: "Conductor 3"} ,
-    { id: 4, name: "Conductor 4"} ,
-    { id: 2, name: "Conductor 2"} ,
-    { id: 5, name: "Conductor 5"} ,
-];
+
 
 function Driver() {
+
+    const [drivers, setDrivers] = useState([]);
+    const role = "Conductor";
+
+    useEffect(() => {
+        const fetchDrivers = async () => {
+            try {
+                const driverData = await getAllDrivers();
+                setDrivers(driverData);
+            } catch (error) {
+                console.error("Error fetching drivers", error);
+            }
+        };
+        fetchDrivers();
+    }, []);
+
     return (
         <div>
-            <ShowList title = "Conductores" role="Conductor" initialItems={initialItems}/>
+            <ShowList title = "Conductores" role={role} initialItems={drivers}/>
         </div>
     );
 }

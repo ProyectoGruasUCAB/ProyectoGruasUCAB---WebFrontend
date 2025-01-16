@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { changePassword, setAuthToken } from '../../../api/api';
 
 const UserProfile = () => {
     const [user, setUser] = useState({});
@@ -17,13 +18,22 @@ const UserProfile = () => {
     const handleShowModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
-    const handleChangePassword = (e) => {
+    const handleChangePassword = async (e) => {
         e.preventDefault();
-        // Aquí podrías añadir lógica para cambiar la contraseña, por ejemplo, llamando a una API
-        console.log('Nueva contraseña:', newPassword);
-        handleCloseModal();
+        try {
+            const token = localStorage.getItem('authToken');
+            setAuthToken(token);
+
+            await changePassword(userEmail, newPassword);
+            console.log('Contraseña cambiada correctamente.');
+            handleCloseModal();
+        } catch (error) {
+            console.error('Error al cambiar la contraseña:', error);
+        }
     };
 
+    const userEmail = localStorage.getItem('userEmail');
+    
     return (
         <Container className="mt-5 d-flex justify-content-center">
             <div style={{ maxWidth: '600px', width: '100%' }}>
@@ -39,7 +49,7 @@ const UserProfile = () => {
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Correo Electrónico:</label>
-                        <p>{user.email}</p>
+                        <p>{userEmail}</p>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Número de Cédula:</label>

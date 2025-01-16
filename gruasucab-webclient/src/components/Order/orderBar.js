@@ -1,15 +1,14 @@
 import React from 'react';
-import { Nav } from 'react-bootstrap';
-import './orderBox.css'
-function OrderBar() {
-    return (
-        <div className='order-bar'>
-            <Nav defaultActiveKey="/home" className="flex-column">
-                <Nav.Link href="/home">Ordenes en progreso</Nav.Link>
-                <Nav.Link href="/servicios">Ordenes completadas</Nav.Link>
-            </Nav>
-        </div>
-    )
+import './orderBox.css';
+import InputComponent from '../MapContainer/inputComponent';
+
+function OrderBar({ setOrigin, setDestination, setDriver }) {
+
+  return (
+    <div>
+      <InputComponent setOrigin={setOrigin} setDestination={setDestination} setDriver={setDriver}/>
+    </div>
+  );
 }
 
 export default OrderBar;
