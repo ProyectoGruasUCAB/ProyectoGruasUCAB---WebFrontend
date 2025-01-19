@@ -1,0 +1,68 @@
+.order-details-container {
+  position: relative; /* Esto asegura que los elementos hijos respeten el flujo de contenido */
+  width: 100%;
+ /* max-width: 1200px;*/
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden; /* Asegura que el contenido no se desborde */
+}
+.order-details-container h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  width: 100%; /* Asegura que el título ocupe todo el ancho */
+  text-align: left; /* Justifica el título a la izquierda */
+}
+
+.order-map {
+  position: relative; /* Asegura que el mapa respete el flujo del documento */
+  width: 100%;
+  height: 400px;
+  margin-bottom: 20px;
+  z-index: 1; /* Asegura que el mapa esté detrás de los datos */
+}
+.order-info {
+  position: relative;
+  z-index: 2; /* Asegura que los datos estén por encima del mapa */
+  background-color: white; /* Opcional: Fondo blanco para destacar sobre el mapa */
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Agrega una sombra para destacar */
+}
+
+.order-info h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.order-info-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-info-item strong {
+  color: #555;
+}
+
+.order-info-item span {
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Para dispositivos móviles */
+@media (max-width: 768px) {
+  .order-info {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .order-map {
+    height: 200px;
+  }
+}

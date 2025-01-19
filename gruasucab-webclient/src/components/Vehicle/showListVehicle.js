@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Table, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
-import './showListCustom.css';
+import "../UI/showListCustom.css"
 
-function ShowList({ title, role, initialItems }) {
+function ShowListVehicle({ title, role, initialItems }) {
   const [items] = useState(initialItems || []);
   const navigate = useNavigate();
 
@@ -42,9 +42,10 @@ function ShowList({ title, role, initialItems }) {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Cédula</th>
-                <th>Correo</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Placa</th>
                 <th></th>
               </tr>
             </thead>
@@ -52,9 +53,10 @@ function ShowList({ title, role, initialItems }) {
               {items.length > 0 ? (
                 items.map((item, index) => (
                   <tr key={item.id} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
-                    <td>{item.name}</td>
-                    <td>{item.cedula}</td>
-                    <td>{item.userEmail}</td>
+                    <td>{item.brand}</td>
+                    <td>{item.model}</td>
+                    <td>{item.color}</td>
+                    <td>{item.licensePlate}</td>
                     <td className="text-end">
                       {/* Botón Ver */}
                       <Button
@@ -97,7 +99,7 @@ function ShowList({ title, role, initialItems }) {
 }
 
 // Validación de props
-ShowList.propTypes = {
+ShowListVehicle.propTypes = {
   title: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
   initialItems: PropTypes.arrayOf(PropTypes.shape({
@@ -108,4 +110,4 @@ ShowList.propTypes = {
   })).isRequired,
 };
 
-export default ShowList;
+export default ShowListVehicle;

@@ -175,3 +175,172 @@ export const getAllDrivers = async () => {
     throw error;
   }
 };
+
+export const getDriverById = async (userId) => {
+  try {
+    const response = await apiClient.get(`/User/GetDriverById/${userId}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+      throw error; 
+  }
+};
+
+export const getWorkerById = async (userId) => {
+  try {
+    console.log(userId);
+    const response = await apiClient.get(`/User/GetWorkerById/${userId}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+      throw error; 
+  }
+};
+
+
+export const getProviderById = async (userId) => {
+  try {
+    console.log(userId);
+    const response = await apiClient.get(`/User/GetProviderById/${userId}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+      throw error; 
+  }
+};
+
+export const recordUserData = async (user) => {
+  try {
+    const response = await apiClient.post('/User/RecordUserData', user);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+      throw error; 
+  }
+}
+
+
+export const getAllWorkers = async () => {
+  try {
+    const response = await apiClient.get('/User/GetAllWorkers');
+    if (response.status === 200) {
+      console.log(response.data);
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los trabajadores:', error);
+    throw error;
+  }
+};
+
+export const getAllProviders = async () => {
+  try {
+    const response = await apiClient.get('/User/GetAllProviders');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los trabajadores:', error);
+    throw error;
+  }
+};
+
+export const createServiceOrder = async (orderData) => {
+  try {
+    const response = await apiClient.post('/ServiceOrder/CreateServiceOrder', orderData);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al crear la orden de servicio:', error);
+    throw error;
+  }
+}
+
+export const getServiceOrderById = async (serviceOrderId) => {
+  try {
+    const response = await apiClient.get(`/ServiceOrder/GetServiceOrderById/${serviceOrderId}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener la orden de servicio:', error);
+    throw error;
+  }
+}
+
+export const getAllOrders = async () => {
+  try {
+    const response = await apiClient.get("/ServiceOrder/GetAllServiceOrders");
+    if (response.status === 200) {
+      return response.data; 
+    }
+  } catch (error) {
+    console.error("Error al obtener las órdenes:", error);
+    throw error;
+  }
+};
+
+export const updateUserData = async (userData) => {
+  try {
+    const response = await apiClient.put('/User/UpdateUserData', userData);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al actualizar los datos del usuario:', error);
+    throw error;
+  }
+};
+
+export const getAllVehicle = async () => {
+  try {
+    const response = await apiClient.get('/Vehicle/GetAllVehicles');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los vehículos:', error);
+    throw error;
+  }
+} 
+
+export const getAllPolicies = async () => {
+  try {
+    const response = await apiClient.get('/Policy/GetAllPolicies');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener las pólizas:', error);
+    throw error;
+  }
+}
+
+export const getAllServiceFees = async () => {
+  try {
+    const response = await apiClient.get('/ServiceFee/GetAllServiceFees');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los cargos de servicio:', error);
+    throw error;
+  }
+}
+
+export const getAllDepartments = async () => {
+  try {
+    const response = await apiClient.get('/Department/GetAllDepartments');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los departamentos:', error);
+    throw error;
+  }
+}

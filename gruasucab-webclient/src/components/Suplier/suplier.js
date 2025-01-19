@@ -1,21 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ShowList from "../UI/showList";
-
-
-const initialItems = [
-    { id: 1, name: "Proveedor 1"} ,
-    { id: 3, name: "Proveedor 3"} ,
-    { id: 4, name: "Proveedor 4"} ,
-    { id: 2, name: "Proveedor 2"} ,
-    { id: 5, name: "Proveedor 5"} ,
-];
+import { getAllProviders, setAuthToken } from '../../api/api';
 
 function Suplier() {
-    return (
-        <div>
-            <ShowList title = "Proveeores" role="Proveedor" initialItems={initialItems}/>
-        </div>
-    );
+  const [providers, setWorkers] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); 
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        setAuthToken(token);
+        const response = await getAllProviders();
+        console.log('Response:', response.providers); // Imprimir estructura completa del response
+        setWorkers(response.providers); 
+      } catch (error) {
+        setError(error.message || 'Error al obtener los trabajadores, intenta de nuevo'); 
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchProviders();
+  }, []);
+  
+
+  return (
+    <div>
+      {isLoading ? (
+        <p>Cargando...</p> 
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : (
+        <ShowList title="Operadores" role="Proveedor" initialItems={providers} />
+      )}
+    </div>
+  );
 }
 
 export default Suplier;

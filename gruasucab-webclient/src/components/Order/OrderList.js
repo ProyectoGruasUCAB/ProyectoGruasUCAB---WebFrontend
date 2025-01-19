@@ -6,7 +6,7 @@ const OrderList = ({ orders }) => {
   const navigate = useNavigate();
 
   const handleViewClick = (id) => {
-    navigate(`/orders/${id}`);
+    navigate(`/order-detail/${id}`);
   };
 
   return (
@@ -16,9 +16,9 @@ const OrderList = ({ orders }) => {
         {orders.map(order => (
           <ListGroup.Item key={order.id} className="d-flex justify-content-between align-items-center">
             <div>
-              {order.name} - {order.status}
+              {order.incidentDescription} - {order.statusServiceOrder} - {order.incidentCost}$
             </div>
-            <Button variant="primary" onClick={() => handleViewClick(order.id)}>
+            <Button variant="primary" onClick={() => handleViewClick(order.serviceOrderId)}>
               Ver
             </Button>
           </ListGroup.Item>

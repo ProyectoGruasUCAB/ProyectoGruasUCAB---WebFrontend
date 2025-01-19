@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createUser, setAuthToken } from '../../../api/api';
 
 const AddUser = () => {
     const { role } = useParams();
-
+    const navigate = useNavigate();
     const [user, setUser] = useState({
-        userEmail: '',
         emailToCreate: '',
-        nameRole: role,
-        workplaceId: ''
     });
 
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const userEmail = localStorage.getItem('userEmail');
-        if (userEmail) {
-            setUser((prevUser) => ({ ...prevUser, userEmail}));
-        }
-    }, []);
+       
+        const userEmail = localStorage.getItem('userEmail');  
+        
+        setUser({
+            userEmail: userEmail,
+            userId: localStorage.getItem('userID'),
+            emailToCreate: '',
+            nameRole: role,
+            workplaceId: localStorage.getItem('userID'),
+        });
+    }, [role]); // Se ejecuta cuando cambia el valor de `role`
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,15 +39,13 @@ const AddUser = () => {
         try {
             const token = localStorage.getItem('authToken');
             setAuthToken(token);
-            const response = await createUser(user);
-            console.log('Usuario agregado:', response);
-            setUser({
-                userEmail: '',
+            await createUser(user);
+            setUser((prevUser) => ({
+                ...prevUser,
                 emailToCreate: '',
-                nameRole: role,
-                workplaceId: ''
-            });
+            }));
             setError(''); // Limpiar cualquier mensaje de error anterior
+            navigate("/orders");
         } catch (error) {
             console.error('Error al agregar el usuario:', error);
             setError('Error al agregar el usuario, intenta de nuevo');
@@ -58,20 +59,7 @@ const AddUser = () => {
                 <div className="card shadow-sm p-4">
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label htmlFor="userEmail" className="form-label">Correo del Usuario:</label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                placeholder="user@example.com"
-                                id="userEmail"
-                                name="userEmail"
-                                value={user.userEmail}
-                                readOnly
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="emailToCreate" className="form-label">Confirma tu correo:</label>
+                            <label htmlFor="emailToCreate" className="form-label">Correo electrónico:</label>
                             <input
                                 type="email"
                                 className="form-control"
@@ -79,19 +67,6 @@ const AddUser = () => {
                                 id="emailToCreate"
                                 name="emailToCreate"
                                 value={user.emailToCreate}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="workplaceId" className="form-label">ID del Lugar de Trabajo:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="ID del Lugar de Trabajo"
-                                id="workplaceId"
-                                name="workplaceId"
-                                value={user.workplaceId}
                                 onChange={handleChange}
                                 required
                             />

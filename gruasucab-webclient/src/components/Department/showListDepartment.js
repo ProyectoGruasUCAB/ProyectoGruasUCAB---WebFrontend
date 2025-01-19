@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Table, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
-import './showListCustom.css';
+import "../UI/showListCustom.css"
 
-function ShowList({ title, role, initialItems }) {
+function ShowListDeparment({ title, role, initialItems }) {
   const [items] = useState(initialItems || []);
   const navigate = useNavigate();
 
@@ -43,8 +43,7 @@ function ShowList({ title, role, initialItems }) {
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Cédula</th>
-                <th>Correo</th>
+                <th>Descripción</th>
                 <th></th>
               </tr>
             </thead>
@@ -53,8 +52,7 @@ function ShowList({ title, role, initialItems }) {
                 items.map((item, index) => (
                   <tr key={item.id} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
                     <td>{item.name}</td>
-                    <td>{item.cedula}</td>
-                    <td>{item.userEmail}</td>
+                    <td>{item.description}</td>
                     <td className="text-end">
                       {/* Botón Ver */}
                       <Button
@@ -97,7 +95,7 @@ function ShowList({ title, role, initialItems }) {
 }
 
 // Validación de props
-ShowList.propTypes = {
+ShowListDeparment.propTypes = {
   title: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
   initialItems: PropTypes.arrayOf(PropTypes.shape({
@@ -108,4 +106,4 @@ ShowList.propTypes = {
   })).isRequired,
 };
 
-export default ShowList;
+export default ShowListDeparment;

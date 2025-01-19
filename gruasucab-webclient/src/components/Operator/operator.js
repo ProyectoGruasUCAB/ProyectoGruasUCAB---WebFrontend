@@ -1,20 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ShowList from "../UI/showList";
-
-const initialItems = [
-    { id: 1, name: "Operador 1"} ,
-    { id: 3, name: "Operador 3"} ,
-    { id: 4, name: "Operador 4"} ,
-    { id: 2, name: "Operador 2"} ,
-    { id: 5, name: "Operador 5"} ,
-];
+import { getAllWorkers, setAuthToken } from '../../api/api';
 
 function Operator() {
-    return (
-        <div>
-            <ShowList title="Operadores" role="Trabajador" initialItems={initialItems} />
-        </div>
-    );
+  const [workers, setWorkers] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); 
+
+  useEffect(() => {
+    const fetchWorkers = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        setAuthToken(token);
+        const response = await getAllWorkers();
+        console.log('Response:', response.workers); // Imprimir estructura completa del response
+        setWorkers(response.workers); 
+      } catch (error) {
+        setError(error.message || 'Error al obtener los trabajadores, intenta de nuevo'); 
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchWorkers();
+  }, []);
+  
+
+  return (
+    <div>
+      {isLoading ? (
+        <p>Cargando...</p> 
+      ) : error ? (
+        <p style={{ color: 'red' }}>{error}</p>
+      ) : (
+        <ShowList title="Operadores" role="Trabajador" initialItems={workers} />
+      )}
+    </div>
+  );
 }
 
 export default Operator;

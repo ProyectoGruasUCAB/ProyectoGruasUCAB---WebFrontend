@@ -1,4 +1,4 @@
-import { login, handleIncompleteAccount } from '../../../api/api';
+import { login, handleIncompleteAccount, getWorkerById, getProviderById, setAuthToken } from '../../../api/api';
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import ForgotPassword from './ForgotPassword';
 import './login.css';
 import ChangePasswordModal from './ChangePasswordModal';
 
-function Login({ onLogin }) {
+function Login({ onLogin, onLogout }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); 
@@ -25,13 +25,52 @@ function Login({ onLogin }) {
       console.log('Iniciar sesión:', user);
       localStorage.setItem('authToken', user.token); 
       localStorage.setItem('refreshToken', user.refreshToken);
-      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userID', user.userID);
+      localStorage.setItem('userEmail', user.userEmail);
+      localStorage.setItem('role', user.role);
+      setAuthToken(user.token);
       setUser(user); 
       onLogin(user);
-      navigate('/orders');
+
+      if (user.role === "Trabajador" || user.role === "Proveedor") {
+        try {
+          if (user.role === "Trabajador") {
+            try {
+              const userId = localStorage.getItem('userID');
+              await getWorkerById(userId);
+              navigate('/orders');
+            } catch (error) {
+              if (error.status === 500) {
+                console.log("Completar Trabajador");
+                navigate('/user-form');
+              }
+            }
+          } else if (user.role === "Proveedor") {
+            try {
+              await getProviderById(localStorage.getItem('userID'));
+              navigate('/orders');
+            } catch (error) {
+              if (error.status === 500) {
+                console.log("Completar Proveedor");
+                navigate('/user-form');
+              }
+            }
+          } 
+        } catch (error) {
+          if (error.status === 500) {
+            console.log("Completar usuario");
+            navigate('/user-form');
+          } else {
+            console.error("Error desconocido");
+            setError("Ocurrió un error desconocido");
+          }
+        }
+      } else {
+        navigate('/orders');
+      }
     } catch (error) {
-      if (error.message === 'Account is not fully set up') {
-        setModalOpen(true); // Abre la ventana emergente si la cuenta no está completamente configurada
+      if (error.message === "Account is not fully set up") {
+        setModalOpen(true);
       } else {
         console.error('Credenciales incorrectas', error);
         setError('Correo o contraseña incorrectos');

@@ -19,7 +19,6 @@ function Orders() {
       <OrderBar setOrigin={setOrigin} setDestination={setDestination} setDriver={setDriver} />
       <div className="flex-grow-1 p-3">
         <h1>Ordenes</h1>
-        {console.log("Ubicación del conductor en Orders1:", driver)}
         <MapContainer origin={origin} destination={destination} driver={driver} />
         <OrderBox orders={orders} />
       </div>

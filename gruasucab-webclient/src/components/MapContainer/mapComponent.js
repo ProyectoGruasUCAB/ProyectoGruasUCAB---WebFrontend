@@ -17,8 +17,10 @@ const MapComponent = ({ origin, destination, driver }) => {
     });
 
     let map;
-    let directionsRenderer;
-    let directionsService;
+    let directionsRendererPrimary;
+    let directionsServicePrimary;
+    let directionsRendererDriverToOrigin;
+    let directionsServiceDriverToOrigin;
 
     loader.load().then(() => {
       map = new window.google.maps.Map(mapRef.current, {
@@ -26,8 +28,6 @@ const MapComponent = ({ origin, destination, driver }) => {
         zoom: 12,
         mapId: "b26807eeb8a510f9", // Añadimos el mapId proporcionado
       });
-
-      console.log("Ubicación del conductor en MapComponent:", driver); // Agregamos el console.log
 
       // Configurar los marcadores solo si las ubicaciones están disponibles
       if (origin) {
@@ -63,14 +63,15 @@ const MapComponent = ({ origin, destination, driver }) => {
         });
       }
 
-      directionsRenderer = new window.google.maps.DirectionsRenderer({
+      // Inicializar la primera ruta (origen a destino)
+      directionsRendererPrimary = new window.google.maps.DirectionsRenderer({
         suppressMarkers: true, // Suppress the default markers
       });
-      directionsService = new window.google.maps.DirectionsService();
-      directionsRenderer.setMap(map);
+      directionsServicePrimary = new window.google.maps.DirectionsService();
+      directionsRendererPrimary.setMap(map);
 
       if (origin && destination) {
-        directionsService.route(
+        directionsServicePrimary.route(
           {
             origin: origin,
             destination: destination,
@@ -78,9 +79,38 @@ const MapComponent = ({ origin, destination, driver }) => {
           },
           (result, status) => {
             if (status === window.google.maps.DirectionsStatus.OK) {
-              directionsRenderer.setDirections(result);
+              directionsRendererPrimary.setDirections(result);
             } else {
               console.error(`Error fetching directions: ${status}`);
+            }
+          }
+        );
+      }
+
+      // Inicializar la segunda ruta (conductor a origen)
+      if (driver && origin) {
+        directionsRendererDriverToOrigin = new window.google.maps.DirectionsRenderer({
+          suppressMarkers: true, // Suppress the default markers
+          polylineOptions: {
+            strokeColor: "yellow", // Ruta en amarillo
+            strokeOpacity: 0.8,
+            strokeWeight: 6,
+          },
+        });
+        directionsServiceDriverToOrigin = new window.google.maps.DirectionsService();
+        directionsRendererDriverToOrigin.setMap(map);
+
+        directionsServiceDriverToOrigin.route(
+          {
+            origin: driver,
+            destination: origin,
+            travelMode: window.google.maps.TravelMode.DRIVING,
+          },
+          (result, status) => {
+            if (status === window.google.maps.DirectionsStatus.OK) {
+              directionsRendererDriverToOrigin.setDirections(result);
+            } else {
+              console.error(`Error fetching driver to origin directions: ${status}`);
             }
           }
         );

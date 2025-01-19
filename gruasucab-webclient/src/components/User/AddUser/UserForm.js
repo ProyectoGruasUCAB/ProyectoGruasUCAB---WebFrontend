@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useParams, useNavigate } from 'react-router-dom';
-import { updateUserData, setAuthToken, getWorkerById } from '../../../api/api';
+import { recordUserData, setAuthToken } from '../../../api/api';
 
-const EditUser = () => {
-    const { id } = useParams(); // Obtener el ID del usuario desde la URL
+const UserForm = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({
-        userEmail: '',
-        userId: '',
-        role: '',
+        userEmail: localStorage.getItem('userEmail'),
+        userId: localStorage.getItem('userID'),
+        role: localStorage.getItem('role'),
         name: '',
         phone: '',
-        cedulaPrefix: 'V-',
-        cedulaNumber: '',
+        cedulaPrefix: 'V-', // Variable extra para el prefijo
+        cedulaNumber: '', // Variable para el número de la cédula
         birthDate: '',
         cedulaExpirationDate: null,
         medicalCertificate: null,
@@ -22,31 +21,17 @@ const EditUser = () => {
         driverLicenseExpirationDate: null,
         position: ''
     });
-    const [isLoading, setIsLoading] = useState(true); // Estado para manejar la carga
+
     const [error, setError] = useState('');
 
-    // Cargar datos del usuario al montar el componente
     useEffect(() => {
-        const loadUserData = async () => {
-            try {
-                const token = localStorage.getItem('authToken');
-                setAuthToken(token); // Configurar el token de autenticación
-                const response = await getWorkerById(id); // Fetch datos del usuario
-                setUser({
-                    ...response.data,
-                    cedulaPrefix: response.data.cedula.split('-')[0], // Separar prefijo
-                    cedulaNumber: response.data.cedula.split('-')[1]  // Separar número
-                });
-            } catch (error) {
-                console.error('Error al cargar datos del usuario:', error);
-                setError('No se pudieron cargar los datos del usuario.');
-            } finally {
-                setIsLoading(false); // Deshabilitar el estado de carga
-            }
-        };
-
-        loadUserData();
-    }, [id]);
+        setUser((prevUser) => ({
+            ...prevUser,
+            userEmail: localStorage.getItem('userEmail'),
+            userId: localStorage.getItem('userID'),
+            role: localStorage.getItem('role'),
+        }));
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -60,8 +45,8 @@ const EditUser = () => {
         const prefix = e.target.value;
         setUser((prevUser) => ({
             ...prevUser,
-            cedulaPrefix: prefix,
-            cedulaNumber: prevUser.cedulaNumber
+            cedulaPrefix: prefix, // Actualizar el prefijo
+            cedulaNumber: prevUser.cedulaNumber // Mantener el número
         }));
     };
 
@@ -75,14 +60,30 @@ const EditUser = () => {
             const formattedUser = {
                 ...user,
                 birthDate: formatDate(user.birthDate),
-                cedula: user.cedulaPrefix + user.cedulaNumber // Unir prefijo y número
+                cedula: user.cedulaPrefix + user.cedulaNumber // Unir el prefijo y el número
             };
 
-            await updateUserData(id, formattedUser); // Actualizar datos del usuario
-            navigate('/users'); // Redirigir a la lista de usuarios tras editar
+            const response = await recordUserData(formattedUser);
+            console.log('Usuario agregado:', response);
+            setUser((prevUser) => ({
+                ...prevUser,
+                name: '',
+                phone: '',
+                cedulaPrefix: 'V-', // Reiniciar el prefijo
+                cedulaNumber: '',
+                birthDate: '',
+                cedulaExpirationDate: null,
+                medicalCertificate: null,
+                medicalCertificateExpirationDate: null,
+                driverLicense: null,
+                driverLicenseExpirationDate: null,
+                position: '',
+            }));
+            navigate('/orders')
+            setError(''); // Limpiar cualquier mensaje de error anterior
         } catch (error) {
-            console.error('Error al actualizar el usuario:', error);
-            setError('Error al actualizar el usuario, intenta de nuevo.');
+            console.error('Error al agregar el usuario:', error);
+            setError('Error al agregar el usuario, intenta de nuevo');
         }
     };
 
@@ -91,14 +92,10 @@ const EditUser = () => {
         return `${day}-${month}-${year}`;
     };
 
-    if (isLoading) {
-        return <p className="text-center">Cargando datos del usuario...</p>;
-    }
-
     return (
         <div className="container mt-5 d-flex justify-content-center">
             <div style={{ maxWidth: '600px', width: '100%' }}>
-                <h2 className="text-center mb-4">Editar datos del usuario</h2>
+                <h2 className="text-center mb-4">Ingresar datos del usuario</h2>
                 <div className="card shadow-sm p-4">
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
@@ -130,9 +127,9 @@ const EditUser = () => {
                             <div className="input-group">
                                 <select
                                     className="form-select"
-                                    value={user.cedulaPrefix}
+                                    value={user.cedulaPrefix} // Solo tomar el prefijo
                                     onChange={handleCedulaPrefixChange}
-                                    style={{ maxWidth: '70px' }}
+                                    style={{ maxWidth: '70px' }} // Hacer el recuadro más pequeño
                                 >
                                     <option value="V-">V-</option>
                                     <option value="J-">J-</option>
@@ -142,7 +139,7 @@ const EditUser = () => {
                                     className="form-control"
                                     id="cedulaNumber"
                                     name="cedulaNumber"
-                                    value={user.cedulaNumber}
+                                    value={user.cedulaNumber} // Solo mostrar el número
                                     onChange={handleChange}
                                     required
                                 />
@@ -177,8 +174,8 @@ const EditUser = () => {
                             </div>
                         )}
                         {error && <p style={{ color: 'red' }}>{error}</p>}
-                        <div className="d-flex justify-content-center">
-                            <button type="submit" className="btn btn-primary w-50">Actualizar Usuario</button>
+                        <div className='d-flex justify-content-center'>
+                            <button type="submit" className="btn btn-primary w-50">Agregar Usuario</button>
                         </div>
                     </form>
                 </div>
@@ -187,4 +184,4 @@ const EditUser = () => {
     );
 };
 
-export default EditUser;
+export default UserForm;

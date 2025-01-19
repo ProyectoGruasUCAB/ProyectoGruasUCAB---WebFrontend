@@ -8,8 +8,8 @@ import Suplier from './components/Suplier/suplier';
 import Driver from './components/Driver/driver';
 import Customer from './components/Customer/customer';
 import Vehicle from './components/Vehicle/vehicle';
-import Policies from './components/Policies/policies';
-import Servicios from './components/RoadServices/roadservices';
+import Policy from './components/Policies/policies';
+import Services from './components/RoadServices/roadservices';
 import Department from './components/Department/department';
 import Notification from './components/Notifications/notifications';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,6 +21,8 @@ import UserProfile from './components/User/UserProfile/userProfile';
 import { login, logout } from './api/api'; // Asegúrate de ajustar la ruta a tu api.js
 import UserDetail from './components/User/userDetail';
 import { UserProvider } from './components/User/Login/UserContext'; // Importa el UserProvider
+import UserForm from './components/User/AddUser/UserForm';
+import OrderDetails from './components/Order/OrderDetails';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,10 +40,14 @@ function App() {
   }, []);
 
   const handleLogin = (user) => {
+    if (user.role === 'Conductor') {
+      alert("Los conductores no pueden acceder a la aplicacion web.")
+      handleLogout();
+    } else {
     setIsLoggedIn(true);
     setUserRole(user.role);
     setUserEmail(user.email);
-  };
+}};
 
   const handleLogout = async () => {
     const userEmail = localStorage.getItem('userEmail');
@@ -62,26 +68,10 @@ function App() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userEmail');
+    
   };
 
-  const getUserData = async (id) => {
-    try {
-      const response = await login(`/users/${id}`); // Suponiendo que `login` es la función correcta o cambiando al endpoint correcto
-      return response.data;
-    } catch (error) {
-      console.error('Error:', error);
-      return null;
-    }
-  };
-
-  const updateUser = async (id, userData) => {
-    try {
-      await login.put(`/users/${id}`, userData); // Suponiendo que `login.put` es la función correcta o cambiando al método correcto
-    } catch (error) {
-      console.error('Error: ', error);
-    }
-  };
-
+ 
   return (
     <UserProvider>
       <Router>
@@ -99,16 +89,17 @@ function App() {
                     <Route path="/drivers" element={<Driver />} />
                     <Route path="/customers" element={<Customer />} />
                     <Route path="/vehicles" element={<Vehicle />} />
-                    <Route path="/policies" element={<Policies />} />
-                    <Route path="/servicios" element={<Servicios />} />
+                    <Route path="/policies" element={<Policy />} />
+                    <Route path="/servicios" element={<Services />} />
                     <Route path="/departments" element={<Department />} />
                     <Route path="/notifications" element={<Notification />} />
-                    <Route path="/Login" element={<LoginForm onLogin={handleLogin} />} />
+                    <Route path="/Login" element={<LoginForm onLogin={handleLogin} onLogout={handleLogout}/>} />
                     <Route path='/users/:role/:id' element={<UserDetail />} />
                     <Route path="/addUser/:role" element={<AddUser />} />
-                    <Route path="/editUser/:role/:id" element={<EditUser getUserData={getUserData} updateUser={updateUser} />} />
-                    <Route path="*" element={<Navigate to="/orders" replace />} />
+                    <Route path="/user-form" element={<UserForm />} />
+                    <Route path="/editUser/:role/:id" element={<EditUser />} />
                     <Route path="/profile" element={<UserProfile />} />
+                    <Route path="/order-detail/:orderId" element={<OrderDetails />} />
                   </Routes>
                 </div>
               </div>

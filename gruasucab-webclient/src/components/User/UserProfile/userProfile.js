@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { changePassword, setAuthToken } from '../../../api/api';
+import { changePassword, getWorkerById, setAuthToken } from '../../../api/api';
 
 const UserProfile = () => {
     const [user, setUser] = useState({});
@@ -32,8 +32,27 @@ const UserProfile = () => {
         }
     };
 
+    const fetchUserData = async () => {
+        const role = localStorage.getItem('role');
+        const token = localStorage.getItem('authToken');
+        const userid = localStorage.getItem('userID');
+        setAuthToken(token);
+        if (role === "Trabajador") {
+            try {
+                const workerData = await getWorkerById(userid);
+                setUser(workerData.worker);
+            } catch (error) {
+                console.error('Error al obtener los datos del trabajador:', error);
+            }
+        }
+    };
+
     const userEmail = localStorage.getItem('userEmail');
     
+    useEffect(() => {
+        fetchUserData();
+    }, []);
+
     return (
         <Container className="mt-5 d-flex justify-content-center">
             <div style={{ maxWidth: '600px', width: '100%' }}>
@@ -53,15 +72,19 @@ const UserProfile = () => {
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Número de Cédula:</label>
-                        <p>{user.cedulaNumber}</p>
+                        <p>{user.cedula}</p>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Número de Teléfono:</label>
-                        <p>{user.phoneNumber}</p>
+                        <p>{user.phone}</p>
                     </div>
                     <div className="mb-3">
-                        <label className="form-label">Rol:</label>
-                        <p>{user.role}</p>
+                        <label className="form-label">Fecha de Nacimiento:</label>
+                        <p>{user.birthDate}</p>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Posición:</label>
+                        <p>{user.position}</p>
                     </div>
                     <div className="d-flex justify-content-start">
                         <Button variant="outline-secondary" onClick={handleShowModal}>

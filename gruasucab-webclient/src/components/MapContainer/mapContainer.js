@@ -32,15 +32,8 @@ const MapContainer = ({ origin, destination, driver }) => {
     handleRoute();
   }, [origin, destination]);
 
-  useEffect(() => {
-    if (driver) {
-      console.log("Ubicación del conductor en MapContainer:", driver);
-    }
-  }, [driver]);
-
   return (
     <div className="map-content">
-      {console.log("Pasando la ubicación del conductor a MapComponent:", driver)}
       <MapComponent origin={origin} destination={destination} driver={driver} path={path} />
     </div>
   );
