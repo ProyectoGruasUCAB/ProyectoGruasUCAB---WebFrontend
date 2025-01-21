@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
-import OrderList from '../Order/OrderList'; // Importa el componente OrderList
-import { getWorkerById, getProviderById, getDriverById, getAllOrders } from '../../api/api';
-
+import OrderList from '../Order/OrderList';
+import OrderListDriver from '../Order/OrderListDriver';
+import { getProviderById, getDriverById, getWorkerById, getAllDrivers } from '../../api/apiUser';
+import { getAllOrders } from '../../api/apiServiceOrder';
 const UserDetail = () => {
   const { id, role } = useParams();
   const [user, setUser] = useState(null);
@@ -49,18 +50,26 @@ const UserDetail = () => {
   }, []);
 
   useEffect(() => {
-    const mockDrivers = [
-      { id: 1, name: 'Conductor 1', status: 'Activo' },
-      { id: 2, name: 'Conductor 2', status: 'Inactivo' },
-      { id: 3, name: 'Conductor 3', status: 'Activo' },
-    ];
-
-    setDrivers(mockDrivers);
+    const fetchAllDrivers = async () => {
+      try {
+        const driversData = await getAllDrivers();
+        setDrivers(driversData.drivers);
+      } catch (error) {
+        console.error('Error al cargar los conductores:', error);
+        alert('Error al cargar los conductores');
+      }
+    }
+    fetchAllDrivers();
   }, []);
+
 
   if (!user) {
     return <div>Loading...</div>;
   }
+
+  const filteredOrders = orders.filter(orders => orders.operatorId === user.id);
+
+  const filteredDrivers = drivers.filter(drivers => drivers.supplierId === user.supplierId);
 
   return (
     <Container>
@@ -75,11 +84,10 @@ const UserDetail = () => {
           <p><strong>Nombre:</strong> {user.name}</p>
         </Col>
       </Row>
-      <h3>{role === "Proveedor" ? "Conductores" : "Órdenes de Servicio"}</h3>
       {role === "Proveedor" ? (
-        <OrderList orders={drivers} />
+        <OrderListDriver drivers={filteredDrivers} />
       ) : (
-        <OrderList orders={orders} />
+        <OrderList orders={filteredOrders} />
       )}
     </Container>
   );

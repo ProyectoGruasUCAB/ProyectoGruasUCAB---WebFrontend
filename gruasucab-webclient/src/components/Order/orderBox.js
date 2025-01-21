@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllOrders } from "../../api/api"; 
+import { getAllOrders } from "../../api/apiServiceOrder"; 
 import './orderBox.css';
 
 function OrderBox() {
@@ -8,14 +8,15 @@ function OrderBox() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const fetchOrders = async () => {
       try {
         const fetchedOrders = await getAllOrders(); 
-        setOrders(fetchedOrders.serviceOrders); 
+        const filteredOrders = fetchedOrders.serviceOrders.filter(order => 
+          order.statusServiceOrder !== "Finalizado" && order.statusServiceOrder !== "Cancelado"
+        );
+        setOrders(filteredOrders); 
       } catch (error) {
         console.error("Error al cargar las órdenes:", error);
-
       }
     };
 

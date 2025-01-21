@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { forgotPassword, setAuthToken } from '../../../api/api'; // Asegúrate de ajustar la ruta a tu api.js
+import { forgotPassword, setAuthToken } from '../../../api/apiAuth'; // Asegúrate de ajustar la ruta a tu api.js
 
 const ForgotPassword = ({ show, handleClose }) => {
   const [email, setEmail] = useState('');

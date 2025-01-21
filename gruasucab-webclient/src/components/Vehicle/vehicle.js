@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getAllVehicle, setAuthToken } from '../../api/api';
+import { getAllVehicle } from '../../api/apiVehicle';
+import { setAuthToken } from '../../api/apiAuth';
 import ShowListVehicle from "./showListVehicle";
 
 function Operator() {

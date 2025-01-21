@@ -1,4 +1,5 @@
-import { login, handleIncompleteAccount, getWorkerById, getProviderById, setAuthToken } from '../../../api/api';
+import { login, handleIncompleteAccount, setAuthToken } from '../../../api/apiAuth';
+import { getWorkerById, getProviderById } from '../../../api/apiUser';
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,10 +35,11 @@ function Login({ onLogin, onLogout }) {
 
       if (user.role === "Trabajador" || user.role === "Proveedor") {
         try {
+          setAuthToken(localStorage.getItem("authToken"));
           if (user.role === "Trabajador") {
-            try {
-              const userId = localStorage.getItem('userID');
-              await getWorkerById(userId);
+            try {  
+              setAuthToken(localStorage.getItem("authToken"));
+              await getWorkerById(localStorage.getItem('userID'));
               navigate('/orders');
             } catch (error) {
               if (error.status === 500) {
@@ -47,12 +49,15 @@ function Login({ onLogin, onLogout }) {
             }
           } else if (user.role === "Proveedor") {
             try {
+              console.log("this",user.role);
+              setAuthToken(localStorage.getItem("authToken"));
               await getProviderById(localStorage.getItem('userID'));
-              navigate('/orders');
+              console.log(user.role);
+              navigate('/vehicle');
             } catch (error) {
               if (error.status === 500) {
                 console.log("Completar Proveedor");
-                navigate('/user-form');
+                navigate('/supplier-form');
               }
             }
           } 
@@ -66,9 +71,15 @@ function Login({ onLogin, onLogout }) {
           }
         }
       } else {
-        navigate('/orders');
+        console.log(user.role)
+        if (user.role === 'Proveedor') {
+          navigate('/vehicles');
+        } else {
+          navigate('/orders');
+        }
       }
     } catch (error) {
+      console.log(error.message);
       if (error.message === "Account is not fully set up") {
         setModalOpen(true);
       } else {

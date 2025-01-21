@@ -4,7 +4,7 @@
   gap: 20px;
   overflow-x: auto;
   padding: 10px;
-  max-width: 1500px; /* Ajustamos la anchura máxima al tamaño del monitor */
+  max-width: 73vw; /* Ajustamos la anchura máxima al tamaño del monitor */
   background-color: #fef0cd;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;

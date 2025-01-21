@@ -8,17 +8,13 @@ function ShowListVehicle({ title, role, initialItems }) {
   const [items] = useState(initialItems || []);
   const navigate = useNavigate();
 
-  const handleUserDetail = (id) => {
-    navigate(`/users/${role}/${id}`);
+  const handleVehicleDetail = (id) => {
+    console.log("Id del vehiculo",id)
+    navigate(`/vehicle/${id}`);
   };
 
   const handleEdit = (id) => {
-    navigate(`/editUser/${role}/${id}`);
-  };
-
-  const handleDelete = (id) => {
-    // Implement logic to confirm deletion and potentially update state
-    console.log(`Confirm deletion of item with ID: ${id}`);
+    navigate(`/editVehicle/${id}`);
   };
 
   const handleAddUser = () => {
@@ -52,7 +48,7 @@ function ShowListVehicle({ title, role, initialItems }) {
             <tbody>
               {items.length > 0 ? (
                 items.map((item, index) => (
-                  <tr key={item.id} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
+                  <tr key={item.vehicleId} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
                     <td>{item.brand}</td>
                     <td>{item.model}</td>
                     <td>{item.color}</td>
@@ -62,7 +58,7 @@ function ShowListVehicle({ title, role, initialItems }) {
                       <Button
                         variant="info"
                         className="ms-2"
-                        onClick={() => handleUserDetail(item.id)}
+                        onClick={() => handleVehicleDetail(item.vehicleId)}
                       >
                         Ver
                       </Button>
@@ -70,18 +66,11 @@ function ShowListVehicle({ title, role, initialItems }) {
                       <Button
                         variant="warning"
                         className="ms-2"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => handleEdit(item.vehicleId)}
                       >
                         Editar
                       </Button>
-                      {/* Botón Eliminar */}
-                      <Button
-                        variant="danger"
-                        className="ms-2"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Eliminar
-                      </Button>
+                     
                     </td>
                   </tr>
                 ))

@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // Para manejar parámetros en la URL
-import { getServiceOrderById } from "../../api/api"; // Asegúrate de tener este endpoint
+import { useParams } from "react-router-dom";
+import { getServiceOrderById, updateServiceOrder } from "../../api/apiServiceOrder"; // Asegúrate de tener este endpoint y updateServiceOrder
 import MapComponent from "../MapContainer/mapComponent"; // El componente del mapa
+import { Container, Row, Col, Button } from "react-bootstrap";
 import "./orderDetails.css";
 
 const OrderDetails = () => {
-  const { orderId } = useParams(); // Obtenemos el ID de la orden desde la URL
+  const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [driver, setDriver] = useState(null);
 
   useEffect(() => {
-    console.log("orderId desde useParams:", orderId); // Verifica si el orderId está llegando
+    console.log("orderId desde useParams:", orderId);
     const fetchOrderDetails = async () => {
       try {
         const response = await getServiceOrderById(orderId);
-        console.log("Respuesta de la API:", response); // Verifica la respuesta
+        console.log("Respuesta de la API:", response);
         if (response) {
-          const { serviceOrder } = response; // Desestructuramos la orden de servicio
+          const { serviceOrder } = response;
           setOrderDetails(serviceOrder);
           setOrigin({
             lat: serviceOrder.incidentLocationLat,
@@ -44,44 +45,89 @@ const OrderDetails = () => {
     if (orderId) {
       fetchOrderDetails();
     }
-  }, [orderId]); 
+  }, [orderId]);
+
+  const cancelOrder = async () => {
+    console.log("Cancelling order: ", orderDetails);
+    try {
+      const updatedServiceOrder = {
+        ...orderDetails,
+        userEmail: localStorage.getItem('userEmail'),
+        userId: localStorage.getItem('userID'),
+        serviceOrderId: orderDetails.serviceOrderId,
+        incidentDescription: orderDetails.incidentDescription,
+        state: "Cancelado",
+        initialLocationDriverLat: orderDetails.initialLocationDriverLat,
+        initialLocationDriverLon: orderDetails.initialLocationDriverLon,
+        incidentLocationLat: orderDetails.incidentLocationLat,
+        incidentLocationLon: orderDetails.incidentLocationLon,
+        incidentLocationEndLat: orderDetails.incidentLocationEndLat,
+        incidentLocationEndLon: orderDetails.incidentLocationEndLon,
+        incidentDistance: orderDetails.incidentDistance,
+        customerVehicleDescription: orderDetails.customerVehicleDescription,
+        incidentCost: orderDetails.incidentCost,
+        policyId: orderDetails.policyId,
+        vehicleId: orderDetails.vehicleId,
+        driverId: orderDetails.driverId,
+        customerId: orderDetails.customerId,
+        operatorId: orderDetails.operatorId,
+        serviceFeeId: orderDetails.serviceFeeId
+      };
+      console.log("Orden a cancelar:", updatedServiceOrder);
+      await updateServiceOrder(updatedServiceOrder);
+      setOrderDetails(updatedServiceOrder); // Actualiza el estado local
+      alert("Orden cancelada con éxito.");
+    } catch (error) {
+      console.error("Error al cancelar la orden:", error);
+      alert("Hubo un error al intentar cancelar la orden.");
+    }
+  };
 
   if (!orderDetails) {
     return <div>Cargando detalles de la orden...</div>;
   }
 
   return (
-    <div className="order-details-container">
-      <h1>Detalles de la Orden: {orderDetails.serviceOrderId.slice(0, 8)}</h1>
-      <div className="order-map">
-        <MapComponent origin={origin} destination={destination} driver={driver} />
+    <Container className="order-details-container">
+      <div className="order-details-header">
+        <h1>Detalles de la Orden: {orderDetails.serviceOrderId.slice(0, 8)}</h1>
+        <Button variant="danger" onClick={cancelOrder}>Cancelar Orden</Button>
       </div>
-      <div className="order-info">
-        <h3>Detalles de la Orden</h3>
-        <div className="order-info-item">
-          <strong>Estado:</strong> <span>{orderDetails.statusServiceOrder}</span>
-        </div>
-        <div className="order-info-item">
-          <strong>Cliente:</strong> <span>{orderDetails.customerId}</span>
-        </div>
-        <div className="order-info-item">
-          <strong>Póliza:</strong> <span>{orderDetails.policyId}</span>
-        </div>
-        <div className="order-info-item">
-          <strong>Service Fee:</strong> <span>{orderDetails.serviceFeeId}</span>
-        </div>
-        
-        <div className="order-info-item">
-          <strong>Distancia Total:</strong> <span>{orderDetails.incidentDistance} km</span>
-        </div>
-        <div className="order-info-item">
-          <strong>Costo del Servicio:</strong> <span>${orderDetails.incidentCost}</span>
-        </div>
-        <div className="order-info-item">
-          <strong>Vehículo:</strong> <span>{orderDetails.customerVehicleDescription}</span>
-        </div>
-      </div>
-    </div>
+      <Row className="order-map mb-4">
+        <Col>
+          <MapComponent origin={origin} destination={destination} driver={driver} />
+        </Col>
+      </Row>
+      <Row className="order-info mb-4">
+        <Col>
+          <h3>Detalles de la Orden</h3>
+          <div className="order-info-item">
+            <strong>Estado:</strong> <span>{orderDetails.statusServiceOrder}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Cliente:</strong> <span>{orderDetails.customerId}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Grua:</strong> <span>{orderDetails.vehicleId}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Póliza:</strong> <span>{orderDetails.policyId}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Service Fee:</strong> <span>{orderDetails.serviceFeeId}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Distancia Total:</strong> <span>{orderDetails.incidentDistance} km</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Costo del Servicio:</strong> <span>${orderDetails.incidentCost}</span>
+          </div>
+          <div className="order-info-item">
+            <strong>Vehículo:</strong> <span>{orderDetails.customerVehicleDescription}</span>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

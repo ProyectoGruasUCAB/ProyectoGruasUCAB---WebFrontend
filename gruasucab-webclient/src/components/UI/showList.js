@@ -16,11 +16,6 @@ function ShowList({ title, role, initialItems }) {
     navigate(`/editUser/${role}/${id}`);
   };
 
-  const handleDelete = (id) => {
-    // Implement logic to confirm deletion and potentially update state
-    console.log(`Confirm deletion of item with ID: ${id}`);
-  };
-
   const handleAddUser = () => {
     navigate(`/addUser/${role}`);
   };
@@ -73,13 +68,7 @@ function ShowList({ title, role, initialItems }) {
                         Editar
                       </Button>
                       {/* Botón Eliminar */}
-                      <Button
-                        variant="danger"
-                        className="ms-2"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Eliminar
-                      </Button>
+                     
                     </td>
                   </tr>
                 ))

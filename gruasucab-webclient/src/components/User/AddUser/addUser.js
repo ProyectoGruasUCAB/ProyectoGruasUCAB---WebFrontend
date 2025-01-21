@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { createUser, setAuthToken } from '../../../api/api';
+import { createUser, setAuthToken } from '../../../api/apiAuth';
 
 const AddUser = () => {
     const { role } = useParams();

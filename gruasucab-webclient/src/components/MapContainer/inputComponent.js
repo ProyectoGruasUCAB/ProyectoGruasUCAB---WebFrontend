@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import './SearchDecorator.css';
-import { createServiceOrder, setAuthToken, getAllDrivers, getAllServiceFees } from "../../api/api";
+import { createServiceOrder } from "../../api/apiServiceOrder";
+import { getAllServiceFees } from '../../api/apiServiceFee';
+import { setAuthToken } from '../../api/apiAuth';
+import { getAllDrivers } from '../../api/apiUser';
 
 const driverLocations = [
   { id: "ca9c65fd-8b70-479e-bc74-8fa3573b4720", lat: 10.5061, lng: -66.9146 },

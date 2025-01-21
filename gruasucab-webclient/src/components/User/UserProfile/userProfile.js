@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { changePassword, getWorkerById, setAuthToken } from '../../../api/api';
+import { changePassword, setAuthToken } from '../../../api/apiAuth';
+import { getWorkerById, getProviderById } from '../../../api/apiUser';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 
 const UserProfile = () => {
+    const navigate = useNavigate();
     const [user, setUser] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [newPassword, setNewPassword] = useState('');
+    const [role, setRole] = useState('');
 
     useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem('user'));
-        if (userData) {
-            setUser(userData);
-        }
-    }, []);
-
+       const fetchUserData = async () => {
+         try {
+            const role = localStorage.getItem('role');
+            setRole(role);
+            const userId = localStorage.getItem('userID');
+           if (role === "Trabajador") {
+             const userData = await getWorkerById(userId);
+             setUser(userData.worker);
+           } else if (role === "Proveedor") {
+             const userData = await getProviderById(userId);
+             setUser(userData.provider);
+           } 
+           console.log("Usuario:", user)
+         } catch (error) {
+           console.error('Error al cargar los datos:', error);
+           alert('Error al cargar datos del usuario');
+         }
+       };
+   
+         fetchUserData();
+     }, []);
     const handleShowModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
@@ -24,7 +43,7 @@ const UserProfile = () => {
             const token = localStorage.getItem('authToken');
             setAuthToken(token);
 
-            await changePassword(userEmail, newPassword);
+            await changePassword(user.userEmail, newPassword);
             console.log('Contraseña cambiada correctamente.');
             handleCloseModal();
         } catch (error) {
@@ -32,26 +51,9 @@ const UserProfile = () => {
         }
     };
 
-    const fetchUserData = async () => {
-        const role = localStorage.getItem('role');
-        const token = localStorage.getItem('authToken');
-        const userid = localStorage.getItem('userID');
-        setAuthToken(token);
-        if (role === "Trabajador") {
-            try {
-                const workerData = await getWorkerById(userid);
-                setUser(workerData.worker);
-            } catch (error) {
-                console.error('Error al obtener los datos del trabajador:', error);
-            }
-        }
+    const handleAddCompany = () => {
+        navigate('/supplier-form');
     };
-
-    const userEmail = localStorage.getItem('userEmail');
-    
-    useEffect(() => {
-        fetchUserData();
-    }, []);
 
     return (
         <Container className="mt-5 d-flex justify-content-center">
@@ -63,12 +65,8 @@ const UserProfile = () => {
                         <p>{user.name}</p>
                     </div>
                     <div className="mb-3">
-                        <label className="form-label">Apellido:</label>
-                        <p>{user.lastname}</p>
-                    </div>
-                    <div className="mb-3">
                         <label className="form-label">Correo Electrónico:</label>
-                        <p>{userEmail}</p>
+                        <p>{user.userEmail}</p>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Número de Cédula:</label>
@@ -82,13 +80,24 @@ const UserProfile = () => {
                         <label className="form-label">Fecha de Nacimiento:</label>
                         <p>{user.birthDate}</p>
                     </div>
-                    <div className="mb-3">
-                        <label className="form-label">Posición:</label>
-                        <p>{user.position}</p>
-                    </div>
+                    {role === 'Trabajador' && (
+                        <div className="mb-3">
+                            <label className="form-label">Posición:</label>
+                            <p>{user.position}</p>
+                        </div>
+                    )}
+                    {role === 'Proveedor' && (
+                        <div className="mb-3">
+                            <label className="form-label">Supplier Id:</label>
+                            <p>{user.supplierId}</p>
+                        </div>
+                    )}
                     <div className="d-flex justify-content-start">
-                        <Button variant="outline-secondary" onClick={handleShowModal}>
+                        <Button variant="outline-secondary" onClick={handleShowModal} className="me-2">
                             Cambiar Contraseña
+                        </Button>
+                        <Button variant="outline-primary" onClick={handleAddCompany}>
+                            Agregar Empresa
                         </Button>
                     </div>
                 </Card>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getAllServiceFees, setAuthToken } from '../../api/api';
+import { getAllServiceFees } from '../../api/apiServiceFee';
+import { setAuthToken } from '../../api/apiAuth';
 import ShowListServiceFee from "./showListServiceFee";
 
 function Services() {

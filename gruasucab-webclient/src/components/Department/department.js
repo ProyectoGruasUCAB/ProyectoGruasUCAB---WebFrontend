@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { getAllDepartments, setAuthToken } from '../../api/api';
-import ShowListServiceFee from "./showListDepartment";
+import { getAllDepartments } from '../../api/apiDepartment';
+import { setAuthToken } from '../../api/apiAuth';
+import ShowListDeparment from "./showListDepartment";
 
 function Department() {
   const [department, setDepartment] = useState([]);
@@ -33,7 +34,7 @@ function Department() {
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
-        <ShowListServiceFee title="Servicios" role="Servicio" initialItems={department} />
+        <ShowListDeparment title="Departamentos" role="Departamento" initialItems={department} />
       )}
     </div>
   );

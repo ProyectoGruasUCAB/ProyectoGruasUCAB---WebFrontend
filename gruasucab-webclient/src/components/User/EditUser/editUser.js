@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { updateUserData, setAuthToken, getWorkerById } from '../../../api/api';
+import { updateUserData, getWorkerById } from '../../../api/apiUser';
+import { setAuthToken } from '../../../api/apiAuth';
 
 const EditUser = () => {
     const { id } = useParams(); // Obtener el ID del usuario desde la URL

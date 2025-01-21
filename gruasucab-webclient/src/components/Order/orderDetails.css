@@ -66,3 +66,20 @@
     height: 200px;
   }
 }
+
+.order-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Alinea verticalmente el contenido */
+  padding-bottom: 20px;
+}
+
+.order-details-header h1 {
+  margin: 0;
+}
+
+.order-details-header Button {
+  margin-left: auto;
+  width: 200px;
+  margin-right: 20px;
+}

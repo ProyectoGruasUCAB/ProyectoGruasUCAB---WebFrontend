@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ShowList from "../UI/showList";
-import { getAllWorkers, setAuthToken } from '../../api/api';
+import { getAllWorkers } from '../../api/apiUser';
+import { setAuthToken } from '../../api/apiAuth';
 
 function Operator() {
   const [workers, setWorkers] = useState([]);

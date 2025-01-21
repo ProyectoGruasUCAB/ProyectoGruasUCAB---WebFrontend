@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
-import { handleIncompleteAccount } from '../../../api/api'; // Asegúrate de ajustar la ruta a tu api.js
+import { handleIncompleteAccount } from '../../../api/apiAuth'; // Asegúrate de ajustar la ruta a tu api.js
 import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = ({ userEmail }) => {

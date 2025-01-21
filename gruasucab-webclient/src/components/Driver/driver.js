@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ShowList from "../UI/showList";
-import { getAllDrivers, setAuthToken } from '../../api/api';
+import { getAllDrivers } from '../../api/apiUser';
+import { setAuthToken } from '../../api/apiAuth';
 
 function Operator() {
   const [drivers, setDrivers] = useState([]);
@@ -32,7 +33,7 @@ function Operator() {
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
-        <ShowList title="Operadores" role="Conductor" initialItems={drivers} />
+        <ShowList title="Conductores" role="Conductor" initialItems={drivers} />
       )}
     </div>
   );

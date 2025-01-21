@@ -1,30 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { recordUserData, setAuthToken } from '../../../api/api';
+import { recordUserData } from '../../../api/apiUser';
+import { setAuthToken } from '../../../api/apiAuth';
+import { getAllDepartments } from '../../../api/apiDepartment';
+import { getAllSuppliers } from '../../../api/apiSuplier';
 
 const UserForm = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({
         userEmail: localStorage.getItem('userEmail'),
         userId: localStorage.getItem('userID'),
-        role: localStorage.getItem('role'),
         name: '',
         phone: '',
-        cedulaPrefix: 'V-', // Variable extra para el prefijo
-        cedulaNumber: '', // Variable para el número de la cédula
+        cedula: '', 
         birthDate: '',
         cedulaExpirationDate: null,
         medicalCertificate: null,
         medicalCertificateExpirationDate: null,
         driverLicense: null,
         driverLicenseExpirationDate: null,
-        position: ''
+        position: '',
+        workplaceId: '' 
     });
-
+    const [cedulaPrefix, setCedulaPrefix] = useState('V-'); // Variable aparte para el prefijo
+    const [departments, setDepartments] = useState([]); // Lista de departamentos
+    const [suppliers, setSuppliers] = useState([]); // Lista de proveedores
     const [error, setError] = useState('');
 
     useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                const departmentData = await getAllDepartments();
+                setDepartments(departmentData.departments);
+            } catch (error) {
+                console.error('Error al obtener departamentos:', error);
+            }
+        };
+
+        const fetchAllSuppliers = async () => {
+            try {
+                const suppliersData = await getAllSuppliers();
+                setSuppliers(suppliersData.suppliers);
+            } catch (error) {
+                console.error('Error al obtener proveedores:', error);
+            }
+        }
+
+        fetchDepartments();
+        fetchAllSuppliers();
+
         setUser((prevUser) => ({
             ...prevUser,
             userEmail: localStorage.getItem('userEmail'),
@@ -33,7 +58,7 @@ const UserForm = () => {
         }));
     }, []);
 
-    const handleChange = (e) => {
+    const handleUserChange = (e) => {
         const { name, value } = e.target;
         setUser((prevUser) => ({
             ...prevUser,
@@ -42,12 +67,7 @@ const UserForm = () => {
     };
 
     const handleCedulaPrefixChange = (e) => {
-        const prefix = e.target.value;
-        setUser((prevUser) => ({
-            ...prevUser,
-            cedulaPrefix: prefix, // Actualizar el prefijo
-            cedulaNumber: prevUser.cedulaNumber // Mantener el número
-        }));
+        setCedulaPrefix(e.target.value);
     };
 
     const handleSubmit = async (e) => {
@@ -60,17 +80,16 @@ const UserForm = () => {
             const formattedUser = {
                 ...user,
                 birthDate: formatDate(user.birthDate),
-                cedula: user.cedulaPrefix + user.cedulaNumber // Unir el prefijo y el número
+                cedula: cedulaPrefix + user.cedula // Unir el prefijo y el número
             };
-
+            console.log(user);
             const response = await recordUserData(formattedUser);
             console.log('Usuario agregado:', response);
             setUser((prevUser) => ({
                 ...prevUser,
                 name: '',
                 phone: '',
-                cedulaPrefix: 'V-', // Reiniciar el prefijo
-                cedulaNumber: '',
+                cedula: '',
                 birthDate: '',
                 cedulaExpirationDate: null,
                 medicalCertificate: null,
@@ -78,8 +97,15 @@ const UserForm = () => {
                 driverLicense: null,
                 driverLicenseExpirationDate: null,
                 position: '',
+                workplaceId: '' // Restablecer el campo del id del departamento o proveedor
             }));
-            navigate('/orders')
+
+            if (localStorage.getItem('role') === "Proveedor") {
+                navigate('/vehicles');
+            } else {
+                navigate('/orders');
+            }
+
             setError(''); // Limpiar cualquier mensaje de error anterior
         } catch (error) {
             console.error('Error al agregar el usuario:', error);
@@ -106,7 +132,7 @@ const UserForm = () => {
                                 id="name"
                                 name="name"
                                 value={user.name}
-                                onChange={handleChange}
+                                onChange={handleUserChange}
                                 required
                             />
                         </div>
@@ -118,7 +144,7 @@ const UserForm = () => {
                                 id="phone"
                                 name="phone"
                                 value={user.phone}
-                                onChange={handleChange}
+                                onChange={handleUserChange}
                                 required
                             />
                         </div>
@@ -127,7 +153,7 @@ const UserForm = () => {
                             <div className="input-group">
                                 <select
                                     className="form-select"
-                                    value={user.cedulaPrefix} // Solo tomar el prefijo
+                                    value={cedulaPrefix} // Solo tomar el prefijo
                                     onChange={handleCedulaPrefixChange}
                                     style={{ maxWidth: '70px' }} // Hacer el recuadro más pequeño
                                 >
@@ -137,10 +163,10 @@ const UserForm = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="cedulaNumber"
-                                    name="cedulaNumber"
-                                    value={user.cedulaNumber} // Solo mostrar el número
-                                    onChange={handleChange}
+                                    id="cedula"
+                                    name="cedula"
+                                    value={user.cedula} // Solo mostrar el número
+                                    onChange={handleUserChange}
                                     required
                                 />
                             </div>
@@ -153,7 +179,7 @@ const UserForm = () => {
                                 id="birthDate"
                                 name="birthDate"
                                 value={user.birthDate}
-                                onChange={handleChange}
+                                onChange={handleUserChange}
                                 required
                             />
                         </div>
@@ -165,7 +191,7 @@ const UserForm = () => {
                                     id="position"
                                     name="position"
                                     value={user.position}
-                                    onChange={handleChange}
+                                    onChange={handleUserChange}
                                     required
                                 >
                                     <option value="">Seleccione una posición</option>
@@ -173,6 +199,28 @@ const UserForm = () => {
                                 </select>
                             </div>
                         )}
+                        <div className="mb-3">
+                            <label htmlFor="workplaceId" className="form-label">{user.role === 'Trabajador' ? 'Departamento' : 'Proveedor'}:</label>
+                            <select
+                                className="form-control"
+                                id="workplaceId"
+                                name="workplaceId"
+                                value={user.workplaceId}
+                                onChange={handleUserChange}
+                                required
+                            >
+                                <option value="">{user.role === 'Trabajador' ? 'Seleccione un departamento' : 'Seleccione un empresa'}</option>
+                                {user.role === 'Trabajador' ? (
+                                    departments.map((dept) => (
+                                        <option key={dept.departmentId} value={dept.departmentId}>{dept.name}</option>
+                                    ))
+                                ) : (
+                                    suppliers.map((supplier) => (
+                                        <option key={supplier.supplierId} value={supplier.supplierId}>{supplier.name}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className='d-flex justify-content-center'>
                             <button type="submit" className="btn btn-primary w-50">Agregar Usuario</button>
