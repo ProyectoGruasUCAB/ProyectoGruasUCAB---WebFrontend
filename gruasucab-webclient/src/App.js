@@ -26,6 +26,11 @@ import VehicleDetail from './components/Vehicle/vehicleDetail';
 import EditVehicle from './components/Vehicle/editVehicle';
 import SupplierForm from './components/Suplier/supplierForm';
 import Provider from './components/Providers/Providers';
+import AddServiceFee from './components/RoadServices/addServiceFee';
+import AddDepartment from './components/Department/AddDepartment';
+import DepartmentDetail from './components/Department/DepartmentDetail';
+import AddVehicle from './components/Vehicle/addVehicle';
+import EditDepartment from './components/Department/editDeartment';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -101,6 +106,11 @@ function App() {
                     <Route path="/editUser/:role/:id" element={<EditUser />} />
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/supplier-form" element={<SupplierForm />} />
+                    <Route path="/addServiceFee/" element={<AddServiceFee />} />
+                    <Route path="/addDepartment/" element={<AddDepartment />} />
+                    <Route path="addVehicle" element={<AddVehicle />} />
+                    <Route path="/department/:id" element={<DepartmentDetail />} />
+                    <Route path="/editDepartment/:id" element={<EditDepartment />} />
                     <Route path="/order-detail/:orderId" element={<OrderDetails />} />
                   </Routes>
                 </div>

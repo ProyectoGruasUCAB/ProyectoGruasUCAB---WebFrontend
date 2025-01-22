@@ -5,11 +5,16 @@ import OrderList from '../Order/OrderList';
 import OrderListDriver from '../Order/OrderListDriver';
 import { getProviderById, getDriverById, getWorkerById, getAllDrivers } from '../../api/apiUser';
 import { getAllOrders } from '../../api/apiServiceOrder';
+import { getDepartmentById } from '../../api/apiDepartment';
+import { getSupplierById } from '../../api/apiSuplier';
+
 const UserDetail = () => {
   const { id, role } = useParams();
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [drivers, setDrivers] = useState([]);
+  const [departments, setDepartments] = useState(null);
+  const [supplier, setSupplier] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -17,14 +22,21 @@ const UserDetail = () => {
         if (role === "Trabajador") {
           const userData = await getWorkerById(id);
           setUser(userData.worker);
-        } else if (role === "Proveedor") {
-          const userData = await getProviderById(id);
-          setUser(userData.provider);
-        } else if (role === "Conductor") {
-          const userData = await getDriverById(id);
-          setUser(userData.driver);
+          if (userData.worker && userData.worker.workplaceId) {
+            const departmentData = await getDepartmentById(userData.worker.workplaceId);
+            setDepartments(departmentData.department);
+          }
+        } else {
+          if (role === "Proveedor") {
+            const userData = await getProviderById(id);
+            setUser(userData.provider);
+          } else if (role === "Conductor") {
+            const userData = await getDriverById(id);
+            setUser(userData.driver);
+          }
+          const supplierData = await getSupplierById(id);
+          setSupplier(supplierData.supplier);
         }
-        console.log("Usuario:",user)
       } catch (error) {
         console.error('Error al cargar los datos:', error);
         alert('Error al cargar datos del usuario');
@@ -58,18 +70,16 @@ const UserDetail = () => {
         console.error('Error al cargar los conductores:', error);
         alert('Error al cargar los conductores');
       }
-    }
+    };
     fetchAllDrivers();
   }, []);
-
 
   if (!user) {
     return <div>Loading...</div>;
   }
 
-  const filteredOrders = orders.filter(orders => orders.operatorId === user.id);
-
-  const filteredDrivers = drivers.filter(drivers => drivers.supplierId === user.supplierId);
+  const filteredOrders = orders.filter(order => order.operatorId === user.id);
+  const filteredDrivers = drivers.filter(driver => driver.supplierId === user.supplierId);
 
   return (
     <Container>
@@ -81,7 +91,12 @@ const UserDetail = () => {
           <p><strong>Cédula:</strong> {user.cedula}</p>
           <p><strong>Fecha de nacimiento:</strong> {user.birthDate}</p>
           <p><strong>Teléfono:</strong> {user.phone}</p>
-          <p><strong>Nombre:</strong> {user.name}</p>
+          { role === "Trabajador" ? (
+              <p><strong>Departamento:</strong> {departments?.name}</p>
+            ) : (
+              <p><strong>Empresa:</strong> {supplier?.name}</p>
+            )
+          }
         </Col>
       </Row>
       {role === "Proveedor" ? (

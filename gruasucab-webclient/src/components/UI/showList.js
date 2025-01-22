@@ -59,15 +59,18 @@ function ShowList({ title, role, initialItems }) {
                       >
                         Ver
                       </Button>
-                      {/* Botón Editar */}
-                      <Button
-                        variant="warning"
-                        className="ms-2"
-                        onClick={() => handleEdit(item.id)}
-                      >
-                        Editar
-                      </Button>
-                      {/* Botón Eliminar */}
+                     {/* Botón Editar */}
+                      {role !== "Conductor" && (
+                        <Button
+                          variant="warning"
+                          className="ms-2"
+                          onClick={() => handleEdit(item.id)}
+                        >
+                          Editar
+                        </Button>
+                      )}
+
+
                      
                     </td>
                   </tr>

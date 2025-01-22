@@ -4,6 +4,8 @@ import { getServiceOrderById, updateServiceOrder } from "../../api/apiServiceOrd
 import MapComponent from "../MapContainer/mapComponent"; // El componente del mapa
 import { Container, Row, Col, Button } from "react-bootstrap";
 import "./orderDetails.css";
+import { getVehicleById } from "../../api/apiVehicle";
+import { getServiceFeeById } from "../../api/apiServiceFee";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -11,16 +13,26 @@ const OrderDetails = () => {
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [driver, setDriver] = useState(null);
+  const [vehicle, setVehicle ] = useState(null);
+  const [serviceFee, setServiceFee] = useState(null);
 
   useEffect(() => {
     console.log("orderId desde useParams:", orderId);
+
     const fetchOrderDetails = async () => {
       try {
         const response = await getServiceOrderById(orderId);
-        console.log("Respuesta de la API:", response);
         if (response) {
-          const { serviceOrder } = response;
+          const serviceOrder = response.serviceOrder;
           setOrderDetails(serviceOrder);
+          console.log("Detalles de la orden:", serviceOrder);
+
+          const vehicleData = await getVehicleById(serviceOrder.vehicleId);
+          setVehicle(vehicleData.vehicle);
+
+          const serviceFeeIdData = await getServiceFeeById(serviceOrder.serviceFeeId);
+          setServiceFee(serviceFeeIdData.serviceFee);
+
           setOrigin({
             lat: serviceOrder.incidentLocationLat,
             lng: serviceOrder.incidentLocationLon,
@@ -108,13 +120,13 @@ const OrderDetails = () => {
             <strong>Cliente:</strong> <span>{orderDetails.customerId}</span>
           </div>
           <div className="order-info-item">
-            <strong>Grua:</strong> <span>{orderDetails.vehicleId}</span>
+            <strong>Grua:</strong> <span>{vehicle?.brand} {vehicle?.model} {vehicle?.color}</span>
           </div>
           <div className="order-info-item">
             <strong>Póliza:</strong> <span>{orderDetails.policyId}</span>
           </div>
           <div className="order-info-item">
-            <strong>Service Fee:</strong> <span>{orderDetails.serviceFeeId}</span>
+            <strong>Servicio:</strong> <span>{serviceFee.name}</span>
           </div>
           <div className="order-info-item">
             <strong>Distancia Total:</strong> <span>{orderDetails.incidentDistance} km</span>

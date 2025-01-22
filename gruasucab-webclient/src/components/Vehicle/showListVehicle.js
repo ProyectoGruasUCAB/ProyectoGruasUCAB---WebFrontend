@@ -17,8 +17,8 @@ function ShowListVehicle({ title, role, initialItems }) {
     navigate(`/editVehicle/${id}`);
   };
 
-  const handleAddUser = () => {
-    navigate(`/addUser/${role}`);
+  const handleAddVehicle = () => {
+    navigate(`/addVehicle/`);
   };
 
   return (
@@ -28,7 +28,7 @@ function ShowListVehicle({ title, role, initialItems }) {
           <h1>{title}</h1>
         </Col>
         <Col xs="auto">
-          <Button className="btn-primario" onClick={handleAddUser}>
+          <Button className="btn-primario" onClick={handleAddVehicle}>
             Agregar {title}
           </Button>
         </Col>

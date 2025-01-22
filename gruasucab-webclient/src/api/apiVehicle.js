@@ -36,3 +36,15 @@ export const updateVehicle = async (vehicleData) => {
     throw error;
   }
 }
+
+export const createVehicle = async () => {
+  try {
+    const response = await apiClient.post('/Vehicle/CreateVehicle');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al crear el vehículo:', error);
+    throw error;
+  }
+}

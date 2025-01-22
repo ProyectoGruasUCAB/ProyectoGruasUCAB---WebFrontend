@@ -8,16 +8,16 @@ function ShowListDeparment({ title, role, initialItems }) {
   const [items] = useState(initialItems || []);
   const navigate = useNavigate();
 
-  const handleUserDetail = (id) => {
-    navigate(`/users/${role}/${id}`);
+  const handleDepartmentDetail = (id) => {
+    navigate(`/department/${id}`);
   };
 
   const handleEdit = (id) => {
-    navigate(`/editUser/${role}/${id}`);
+    navigate(`/editDepartment/${id}`);
   };
 
-  const handleAddUser = () => {
-    navigate(`/addUser/${role}`);
+  const handleAddDeparment = () => {
+    navigate(`/addDepartment`);
   };
 
   return (
@@ -27,7 +27,7 @@ function ShowListDeparment({ title, role, initialItems }) {
           <h1>{title}</h1>
         </Col>
         <Col xs="auto">
-          <Button className="btn-primario" onClick={handleAddUser}>
+          <Button className="btn-primario" onClick={handleAddDeparment}>
             Agregar {title}
           </Button>
         </Col>
@@ -45,7 +45,7 @@ function ShowListDeparment({ title, role, initialItems }) {
             <tbody>
               {items.length > 0 ? (
                 items.map((item, index) => (
-                  <tr key={item.id} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
+                  <tr key={item.departmentId} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
                     <td>{item.name}</td>
                     <td>{item.description}</td>
                     <td className="text-end">
@@ -53,7 +53,7 @@ function ShowListDeparment({ title, role, initialItems }) {
                       <Button
                         variant="info"
                         className="ms-2"
-                        onClick={() => handleUserDetail(item.id)}
+                        onClick={() => handleDepartmentDetail(item.departmentId)}
                       >
                         Ver
                       </Button>
@@ -61,7 +61,7 @@ function ShowListDeparment({ title, role, initialItems }) {
                       <Button
                         variant="warning"
                         className="ms-2"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => handleEdit(item.departmentId)}
                       >
                         Editar
                       </Button>

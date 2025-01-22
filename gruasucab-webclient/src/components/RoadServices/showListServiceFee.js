@@ -17,8 +17,8 @@ function ShowListServiceFee({ title, role, initialItems }) {
   };
 
 
-  const handleAddUser = () => {
-    navigate(`/addUser/${role}`);
+  const handleAddServiceFee = () => {
+    navigate(`/addServiceFee/`);
   };
 
   return (
@@ -28,7 +28,7 @@ function ShowListServiceFee({ title, role, initialItems }) {
           <h1>{title}</h1>
         </Col>
         <Col xs="auto">
-          <Button className="btn-primario" onClick={handleAddUser}>
+          <Button className="btn-primario" onClick={handleAddServiceFee}>
             Agregar {title}
           </Button>
         </Col>
