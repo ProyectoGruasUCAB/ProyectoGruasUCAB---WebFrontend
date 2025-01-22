@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import './SearchDecorator.css';
-import { createServiceOrder } from "../../api/apiServiceOrder";
+import { createServiceOrder, getServiceOrderById } from "../../api/apiServiceOrder";
 import { getAllServiceFees } from '../../api/apiServiceFee';
 import { setAuthToken } from '../../api/apiAuth';
 import { getAllDrivers } from '../../api/apiUser';
+import { db } from '../../Firebase/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+import { getMessaging, getToken } from 'firebase/messaging';
 
 const driverLocations = [
   { id: "ca9c65fd-8b70-479e-bc74-8fa3573b4720", lat: 10.5061, lng: -66.9146 },
@@ -86,77 +89,102 @@ const InputComponent = ({ setOrigin, setDestination, setDriver }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // Validar que selectedServiceFees no esté vacío
-    if (!selectedServiceFees) {
-      alert('Por favor, selecciona un servicio.');
-      return;
-    }
-  
-    // Buscar el conductor seleccionado en la lista de conductores
-    const driver = drivers.find(d => d.id === selectedDriver);
-    
-    if (!driver) {
-      alert('Conductor no válido.');
-      return;
-    }
-  
-    // Buscar la ubicación del conductor en la lista 'driverLocations'
-    const driverLocation = driverLocations.find(loc => loc.id === selectedDriver);
-    
-    if (!driverLocation) {
-      alert('Ubicación del conductor no encontrada.');
-      return;
-    }
-  
-    // Obtener las coordenadas del conductor
-    const { lat: driverLat, lng: driverLng } = driverLocation;
-    
-    try {
-      console.log("Coordenadas del conductor en el submit Lat:", driverLat, "Lng:", driverLng);
-      const totalDistanceInMeters = await calculateTotalDistance(
-        { lat: driverLat, lng: driverLng }, // Usamos las coordenadas del conductor de driverLocations
-        origin,
-        destination
-      );
-      setTotalDistance(totalDistanceInMeters); // Guardar la distancia total
-      const orderData = {
-        userEmail: localStorage.getItem('userEmail') || 'test@example.com',
-        userId: localStorage.getItem('userID') || 'testUserID',
-        incidentDescription,
-        initialLocationDriverLat: driverLat,
-        initialLocationDriverLon: driverLng,
-        incidentLocationLat: origin.lat,
-        incidentLocationLon: origin.lng,
-        incidentLocationEndLat: destination.lat,
-        incidentLocationEndLon: destination.lng,
-        incidentDistance: totalDistanceInMeters / 1000, // Convertir a kilómetros
-        customerVehicleDescription: vehicleDescription,
-        incidentCost: 1,
-        policyId: localStorage.getItem('userID'),
-        vehicleId: localStorage.getItem('userID'),
-        driverId: driver.id,
-        customerId: localStorage.getItem('userID'),
-        operatorId: localStorage.getItem('userID'),
-        serviceFeeId: selectedServiceFees, // Usar selectedServiceFees
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!selectedServiceFees) {
+    alert('Por favor, selecciona un servicio.');
+    return;
+  }
+
+  const driver = drivers.find(d => d.id === selectedDriver);
+
+  if (!driver) {
+    alert('Conductor no válido.');
+    return;
+  }
+
+  const driverLocation = driverLocations.find(loc => loc.id === selectedDriver);
+
+  if (!driverLocation) {
+    alert('Ubicación del conductor no encontrada.');
+    return;
+  }
+
+  const { lat: driverLat, lng: driverLng } = driverLocation;
+
+  try {
+    console.log("Coordenadas del conductor en el submit Lat:", driverLat, "Lng:", driverLng);
+    const totalDistanceInMeters = await calculateTotalDistance(
+      { lat: driverLat, lng: driverLng },
+      origin,
+      destination
+    );
+    setTotalDistance(totalDistanceInMeters);
+
+    const orderData = {
+      userEmail: localStorage.getItem('userEmail') || 'test@example.com',
+      userId: localStorage.getItem('userID') || 'testUserID',
+      incidentDescription,
+      initialLocationDriverLat: driverLat,
+      initialLocationDriverLon: driverLng,
+      incidentLocationLat: origin.lat,
+      incidentLocationLon: origin.lng,
+      incidentLocationEndLat: destination.lat,
+      incidentLocationEndLon: destination.lng,
+      incidentDistance: totalDistanceInMeters / 1000,
+      customerVehicleDescription: vehicleDescription,
+      incidentCost: 1,
+      policyId: localStorage.getItem('userID'),
+      vehicleId: localStorage.getItem('userID'),
+      driverId: driver.id,
+      customerId: localStorage.getItem('userID'),
+      operatorId: localStorage.getItem('userID'),
+      serviceFeeId: selectedServiceFees,
+    };
+
+    console.log(orderData);
+
+    setAuthToken(localStorage.getItem('authToken'));
+    const response = await createServiceOrder(orderData);
+    if (response.success === true) {
+      alert('Orden creada con éxito en el backend.');
+      const createdServiceOrderData = await getServiceOrderById(response.serviceOrderId);
+      // Guarda la orden en Firestore
+      const docRef = await addDoc(collection(db, "orders"), createdServiceOrderData.serviceOrder);
+
+      // Obtener el token FCM del conductor (deberías haberlo guardado en tu base de datos)
+      const driverToken = selectedDriver.tokenFCM; // Asegúrate de que este token esté disponible
+
+      // Enviar notificación FCM al conductor
+      const payload = {
+        notification: {
+          title: "Nueva orden de servicio",
+          body: `Tienes una nueva orden de servicio asignada.`,
+        },
+        to: driverToken,
       };
-  
-      console.log(orderData);
-  
-      setAuthToken(localStorage.getItem('authToken'));
-      const response = await createServiceOrder(orderData);
-      if (response.success === true) {
-        alert('Orden creada con éxito');
-      } else {
-        alert('Error al crear la orden.');
-      }
-    } catch (error) {
-      console.error('Error al calcular la distancia o enviar la orden:', error);
-      alert('Hubo un error al intentar crear la orden.');
+
+      await fetch("https://fcm.googleapis.com/fcm/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "key=BIi6co20czNfdJqNRMV88Vmik2LA21J8WrFFwKoI38BynE73JLRSoYvpzlfab0wUGoi4kxf8pP2NX8FHQxmMZ8E",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      alert('Notificación enviada al conductor.');
+    } else {
+      alert('Error al crear la orden en el backend.');
     }
-  };
+  } catch (error) {
+    console.error('Error al calcular la distancia o enviar la orden:', error);
+    alert('Hubo un error al intentar crear la orden.');
+  }
+};
+
 
   
   
