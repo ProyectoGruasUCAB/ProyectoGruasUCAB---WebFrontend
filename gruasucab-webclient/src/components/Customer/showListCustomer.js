@@ -1,23 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Table, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import "../UI/showListCustom.css"
 
-function ShowListServiceFee({ title, role, initialItems }) {
-  const [items] = useState(initialItems || []);
+function ShowListCustomer({ title, role, initialItems }) {
+  const [items, setItems] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (initialItems && initialItems.length > 0) {
+      setItems(initialItems);
+    }
+  }, [initialItems]);
+
   const handleUserDetail = (id) => {
-    navigate(`/users/${role}/${id}`);
+    navigate(`/Client|/${id}`);
   };
-
+  
   const handleEdit = (id) => {
-    navigate(`/editUser/${role}/${id}`);
+    navigate(`/editClient/${id}`);
   };
 
-
-  const handleAddServiceFee = () => {
-    navigate(`/addServiceFee/`);
+  const handleAddClient = () => {
+    navigate(`/addClient/`);
   };
 
   return (
@@ -27,7 +33,7 @@ function ShowListServiceFee({ title, role, initialItems }) {
           <h1>{title}</h1>
         </Col>
         <Col xs="auto">
-          <Button className="btn-primario" onClick={handleAddServiceFee}>
+          <Button className="btn-primario" onClick={handleAddClient}>
             Agregar {title}
           </Button>
         </Col>
@@ -37,27 +43,25 @@ function ShowListServiceFee({ title, role, initialItems }) {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Costo inicial</th>
-                <th>Costo del Km</th>
-                <th>Radio de cobertura</th>
+                <th>Nombre Completo</th>
+                <th>Cédula</th>
+                <th>Teléfono</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {items.length > 0 ? (
                 items.map((item, index) => (
-                  <tr key={item.id} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
-                    <td>{item.name}</td>
-                    <td>{item.price}$</td>
-                    <td>{item.priceKm}$</td>
-                    <td>{item.radius} Km</td>
+                  <tr key={item.id_cliente} className={index % 2 === 0 ? 'bg-light' : 'bg-white'}>
+                    <td>{item.nombre_completo_cliente}</td>
+                    <td>{item.cedula_cliente}</td>
+                    <td>{item.tlf_cliente}</td>
                     <td className="text-end">
                       {/* Botón Ver */}
                       <Button
                         variant="info"
                         className="ms-2"
-                        onClick={() => handleUserDetail(item.id)}
+                        onClick={() => handleUserDetail(item.id_cliente)}
                       >
                         Ver
                       </Button>
@@ -65,7 +69,7 @@ function ShowListServiceFee({ title, role, initialItems }) {
                       <Button
                         variant="warning"
                         className="ms-2"
-                        onClick={() => handleEdit(item.id)}
+                        onClick={() => handleEdit(item.id_cliente)}
                       >
                         Editar
                       </Button>
@@ -75,7 +79,7 @@ function ShowListServiceFee({ title, role, initialItems }) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4">No se encontraron resultados.</td>
+                  <td colSpan="5">No se encontraron resultados.</td>
                 </tr>
               )}
             </tbody>
@@ -87,15 +91,15 @@ function ShowListServiceFee({ title, role, initialItems }) {
 }
 
 // Validación de props
-ShowListServiceFee.propTypes = {
+ShowListCustomer.propTypes = {
   title: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
   initialItems: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    cedula: PropTypes.string.isRequired,
-    userEmail: PropTypes.string.isRequired,
+    id_cliente: PropTypes.string.isRequired,
+    nombre_completo_cliente: PropTypes.string.isRequired,
+    cedula_cliente: PropTypes.string.isRequired,
+    tlf_cliente: PropTypes.string.isRequired,
   })).isRequired,
 };
 
-export default ShowListServiceFee;
+export default ShowListCustomer;

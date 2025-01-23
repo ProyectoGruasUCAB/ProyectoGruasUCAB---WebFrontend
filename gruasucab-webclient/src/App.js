@@ -31,7 +31,7 @@ import AddDepartment from './components/Department/AddDepartment';
 import DepartmentDetail from './components/Department/DepartmentDetail';
 import AddVehicle from './components/Vehicle/addVehicle';
 import EditDepartment from './components/Department/editDeartment';
-
+import AddClient from './components/Customer/addClient';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState('');
@@ -92,7 +92,7 @@ function App() {
                     <Route path="/providers" element={<Suplier />} />
                     <Route path="/suppliers" element={<Provider />} />
                     <Route path="/drivers" element={<Driver />} />
-                    <Route path="/customers" element={<Customer />} />
+                    <Route path="/client" element={<Customer />} />
                     <Route path="/vehicles" element={<Vehicle />} />
                     <Route path="/vehicle/:id" element={<VehicleDetail />} />
                     <Route path="/editVehicle/:id" element={<EditVehicle />} />
@@ -111,6 +111,7 @@ function App() {
                     <Route path="addVehicle" element={<AddVehicle />} />
                     <Route path="/department/:id" element={<DepartmentDetail />} />
                     <Route path="/editDepartment/:id" element={<EditDepartment />} />
+                    <Route path="/addClient" element={<AddClient />} />
                     <Route path="/order-detail/:orderId" element={<OrderDetails />} />
                   </Routes>
                 </div>

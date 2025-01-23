@@ -43,6 +43,7 @@ function OrderBox() {
   }, []);
 
   const handleClick = (orderId) => {
+    console.log(orderId);
     navigate(`/order-detail/${orderId}`);
   };
 

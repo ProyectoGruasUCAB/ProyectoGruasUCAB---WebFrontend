@@ -9,10 +9,7 @@ function Orders() {
   const [destination, setDestination] = useState(null);
   const [driver, setDriver] = useState(null);
 
-  const orders = [
-    { id: 1, name: "Order1", description: "Descripcion de la orden 1" },
-    { id: 2, name: "Order2", description: "Descripcion de la orden 2" }
-  ];
+  
 
   return (
     <div className="d-flex">
@@ -20,7 +17,7 @@ function Orders() {
       <div className="flex-grow-1 p-3">
         <h1>Ordenes</h1>
         <MapContainer origin={origin} destination={destination} driver={driver} />
-        <OrderBox orders={orders} />
+        <OrderBox/>
       </div>
     </div>
   );

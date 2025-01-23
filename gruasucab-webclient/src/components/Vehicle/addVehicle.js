@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { setAuthToken } from '../../api/apiAuth';
-import { createVehicle } from '../../api/apiVehicle';
+import { createVehicle, getAllVehicleTypes } from '../../api/apiVehicle';
 
 const AddVehicle = () => {
     const navigate = useNavigate();
     const [vehicle, setVehicle] = useState({
         userEmail: '',
         userId: '',
-        driverId: '',
-        supplierId: '',
         civilLiability: '',
         civilLiabilityExpirationDate: '',
         trafficLicense: '',
@@ -20,15 +18,13 @@ const AddVehicle = () => {
         model: '',
         vehicleTypeId: '',
     });
-
+    const [vehicleTypes, setVehicleTypes] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
         setVehicle({
             userEmail: localStorage.getItem('userEmail'),
             userId: localStorage.getItem('userID'),
-            driverId: '',
-            supplierId: '',
             civilLiability: '',
             civilLiabilityExpirationDate: '',
             trafficLicense: '',
@@ -38,6 +34,18 @@ const AddVehicle = () => {
             model: '',
             vehicleTypeId: '',
         });
+
+        const fetchVehicleTypes = async () => {
+            try {
+                const response = await getAllVehicleTypes();
+                setVehicleTypes(response.vehicleTypes);
+            } catch (error) {
+                console.error('Error al obtener los tipos de vehículos:', error);
+            }
+        };
+        
+
+        fetchVehicleTypes();
     }, []);
 
     const handleChange = (e) => {
@@ -54,11 +62,16 @@ const AddVehicle = () => {
         try {
             const token = localStorage.getItem('authToken');
             setAuthToken(token);
-            await createVehicle(vehicle);
+
+            const formattedVehicle = {
+                ...vehicle,
+                civilLiabilityExpirationDate: formatDate(vehicle.civilLiabilityExpirationDate),
+            };
+            console.log(formattedVehicle);
+            await createVehicle(formattedVehicle);
             setVehicle({
                 userEmail: localStorage.getItem('userEmail'),
                 userId: localStorage.getItem('userID'),
-                driverId: null,
                 supplierId: '',
                 civilLiability: '',
                 civilLiabilityExpirationDate: '',
@@ -77,13 +90,18 @@ const AddVehicle = () => {
         }
     };
 
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split('-');
+        return `${day}-${month}-${year}`;
+    };
+
     return (
         <div className="container mt-5 d-flex justify-content-center">
             <div style={{ maxWidth: '600px', width: '100%' }}>
                 <h2 className="text-center mb-4">Agregar Vehículo</h2>
                 <div className="card shadow-sm p-4">
                     <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
+                        <div className="mb-3">
                             <label htmlFor="brand" className="form-label">Marca:</label>
                             <input
                                 type="text"
@@ -148,7 +166,7 @@ const AddVehicle = () => {
                             />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="trafficLicense" className="form-label">Licencia de Tránsito:</label>
+                            <label htmlFor="trafficLicense" className="form-label">Carnet de circulación:</label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -174,17 +192,20 @@ const AddVehicle = () => {
                             />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="vehicleTypeId" className="form-label">ID del Tipo de Vehículo:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="ID del Tipo de Vehículo"
+                            <label htmlFor="vehicleTypeId" className="form-label">Tipo de Vehículo:</label>
+                            <select
+                                className="form-select"
                                 id="vehicleTypeId"
                                 name="vehicleTypeId"
                                 value={vehicle.vehicleTypeId}
                                 onChange={handleChange}
                                 required
-                            />
+                            >
+                                <option value="">Selecciona un tipo de vehículo</option>
+                                {vehicleTypes.map(type => (
+                                    <option key={type.vehicleTypeId} value={type.vehicleTypeId}>{type.name}</option>
+                                ))}
+                            </select>
                         </div>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className='d-flex justify-content-center'>

@@ -1,18 +1,34 @@
-import React from "react";
-import ShowList from "../UI/showList";
+import React, {useEffect, useState} from "react";
+import ShowListCustomer from "./showListCustomer";
+import {getAllClients} from '../../api/apiClient';
+import { setAuthToken } from '../../api/apiAuth';
 
-const initialItems = [
-    { id: 1, name: "Cliente 1"} ,
-    { id: 3, name: "Cliente 3"} ,
-    { id: 4, name: "Cliente 4"} ,
-    { id: 2, name: "Cliente 2"} ,
-    { id: 5, name: "Cliente 5"} ,
-];
+
+
+
 
 function Customer() {
+    const [clients, setClients] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAllClients = async () => {
+            try {
+                await setAuthToken(localStorage.getItem('authToken'));
+                const response = await getAllClients();
+
+                setClients(response);
+                
+            } catch (error) {
+                setError(error.message || 'Error al obtener los clientes, intenta de nuevo'); 
+            }
+        }
+        fetchAllClients();
+        
+    }, []);
     return (
         <div>
-            <ShowList title = "Clientes" role="Cliente" initialItems={initialItems}/>
+            <ShowListCustomer title = "Clientes" role="Cliente" initialItems={clients}/>
         </div>
     );
 }

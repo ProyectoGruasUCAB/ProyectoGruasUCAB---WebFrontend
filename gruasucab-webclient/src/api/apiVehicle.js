@@ -48,3 +48,15 @@ export const createVehicle = async () => {
     throw error;
   }
 }
+
+export const getAllVehicleTypes = async () => {
+  try {
+    const response = await apiClient.get('/Vehicle/GetAllVehicleTypes');
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.error('Error al obtener los tipos de vehículos:', error);
+    throw error;
+  }
+}

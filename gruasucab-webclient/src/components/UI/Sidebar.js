@@ -11,7 +11,7 @@ function Sidebar({ role }) {
         <Nav.Link as={NavLink} to="/operators" eventKey="/operators" className="sidebar-link"><i className="fa-solid fa-phone icon"></i>Operadores</Nav.Link>
       )}
       {(role === 'Administrador' || role === 'Trabajador') && (
-        <Nav.Link as={NavLink} to="/customers" eventKey="/customers" className="sidebar-link"><i className="fa-solid fa-user icon"></i>Clientes</Nav.Link>
+        <Nav.Link as={NavLink} to="/client" eventKey="/client" className="sidebar-link"><i className="fa-solid fa-user icon"></i>Clientes</Nav.Link>
       )}
       {(role === 'Administrador' || role === 'Proveedor') && (
         <>

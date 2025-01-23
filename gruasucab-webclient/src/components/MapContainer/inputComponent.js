@@ -1,12 +1,18 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import './SearchDecorator.css';
 import { createServiceOrder } from "../../api/apiServiceOrder";
 import { getAllServiceFees } from '../../api/apiServiceFee';
 import { setAuthToken } from '../../api/apiAuth';
 import { getAllDrivers } from '../../api/apiUser';
+import { getAllClients } from "../../api/apiClient";
+import { getAllVehicle } from "../../api/apiVehicle";
+import { getAllPolicies } from "../../api/apiPolicy";
+
+
 
 const driverLocations = [
-  { id: "ca9c65fd-8b70-479e-bc74-8fa3573b4720", lat: 10.5061, lng: -66.9146 },
+  { id: "9eda2bae-f43f-45cb-8e04-3449ffa5cdd4", lat: 10.5061, lng: -66.9146 },
   { id: "22222222-2222-2222-2222-222222222222", lat: 10.4806, lng: -66.9036 },
   { id: "33333333-3333-3333-3333-333333333333", lat: 10.4924, lng: -66.8459 },
 ];
@@ -23,6 +29,11 @@ const InputComponent = ({ setOrigin, setDestination, setDriver }) => {
   const [drivers, setDrivers] = useState([]);  // Lista de conductores
   const [serviceFees, setServiceFees] = useState([]);
   const [selectedServiceFees, setSelectedServiceFees] = useState('');
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState('');
+  const [vehicle, setVehicle] = useState();
+  const [policy, setPolicy] = useState();
+  const navigate = useNavigate();
 
   const calculateTotalDistance = (driver, origin, destination) => {
     return new Promise((resolve, reject) => {
@@ -86,77 +97,85 @@ const InputComponent = ({ setOrigin, setDestination, setDriver }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!selectedServiceFees) {
+    alert('Por favor, selecciona un servicio.');
+    return;
+  }
+
+  const driver = drivers.find(d => d.id === selectedDriver);
+
+  if (!driver) {
+    alert('Conductor no válido.');
+    return;
+  }
+
+  const driverLocation = driverLocations.find(loc => loc.id === selectedDriver);
+
+  if (!driverLocation) {
+    alert('Ubicación del conductor no encontrada.');
+    return;
+  }
+
+  const { lat: driverLat, lng: driverLng } = driverLocation;
+
+  try {
+    console.log("Coordenadas del conductor en el submit Lat:", driverLat, "Lng:", driverLng);
+    const totalDistanceInMeters = await calculateTotalDistance(
+      { lat: driverLat, lng: driverLng },
+      origin,
+      destination
+    );
+    setTotalDistance(totalDistanceInMeters);
+
+        const vehicleData = await getAllVehicle();
+     
+        const filteredVehicle = vehicleData.vehicles.find(v => v.driverId === driver.id);
+        setVehicle(filteredVehicle);
+
+        const policyData = await getAllPolicies();
+        
   
-    // Validar que selectedServiceFees no esté vacío
-    if (!selectedServiceFees) {
-      alert('Por favor, selecciona un servicio.');
-      return;
-    }
-  
-    // Buscar el conductor seleccionado en la lista de conductores
-    const driver = drivers.find(d => d.id === selectedDriver);
-    
-    if (!driver) {
-      alert('Conductor no válido.');
-      return;
-    }
-  
-    // Buscar la ubicación del conductor en la lista 'driverLocations'
-    const driverLocation = driverLocations.find(loc => loc.id === selectedDriver);
-    
-    if (!driverLocation) {
-      alert('Ubicación del conductor no encontrada.');
-      return;
-    }
-  
-    // Obtener las coordenadas del conductor
-    const { lat: driverLat, lng: driverLng } = driverLocation;
-    
-    try {
-      console.log("Coordenadas del conductor en el submit Lat:", driverLat, "Lng:", driverLng);
-      const totalDistanceInMeters = await calculateTotalDistance(
-        { lat: driverLat, lng: driverLng }, // Usamos las coordenadas del conductor de driverLocations
-        origin,
-        destination
-      );
-      setTotalDistance(totalDistanceInMeters); // Guardar la distancia total
-      const orderData = {
-        userEmail: localStorage.getItem('userEmail') || 'test@example.com',
-        userId: localStorage.getItem('userID') || 'testUserID',
-        incidentDescription,
-        initialLocationDriverLat: driverLat,
-        initialLocationDriverLon: driverLng,
-        incidentLocationLat: origin.lat,
-        incidentLocationLon: origin.lng,
-        incidentLocationEndLat: destination.lat,
-        incidentLocationEndLon: destination.lng,
-        incidentDistance: totalDistanceInMeters / 1000, // Convertir a kilómetros
-        customerVehicleDescription: vehicleDescription,
-        incidentCost: 1,
-        policyId: localStorage.getItem('userID'),
-        vehicleId: localStorage.getItem('userID'),
-        driverId: driver.id,
-        customerId: localStorage.getItem('userID'),
-        operatorId: localStorage.getItem('userID'),
-        serviceFeeId: selectedServiceFees, // Usar selectedServiceFees
-      };
-  
-      console.log(orderData);
-  
-      setAuthToken(localStorage.getItem('authToken'));
-      const response = await createServiceOrder(orderData);
-      if (response.success === true) {
-        alert('Orden creada con éxito');
-      } else {
-        alert('Error al crear la orden.');
-      }
-    } catch (error) {
-      console.error('Error al calcular la distancia o enviar la orden:', error);
-      alert('Hubo un error al intentar crear la orden.');
-    }
-  };
+        const filteredPolicy = policyData.policies.find(p => p.clientId === selectedClient);
+        setPolicy(filteredPolicy);
+        console.log(filteredPolicy);
+    const orderData = {
+      userEmail: localStorage.getItem('userEmail') || 'test@example.com',
+      userId: localStorage.getItem('userID') || 'testUserID',
+      incidentDescription,
+      initialLocationDriverLatitude: driverLat,
+      initialLocationDriverLongitude: driverLng,
+      incidentLocationLatitude: origin.lat,
+      incidentLocationLongitude: origin.lng,
+      incidentLocationEndLatitude: destination.lat,
+      incidentLocationEndLongitude: destination.lng,
+      incidentDistance: totalDistanceInMeters / 1000,
+      customerVehicleDescription: vehicleDescription,
+      initialStatus: "PorAceptado",
+      policyId: filteredPolicy.policyId,
+      vehicleId: filteredVehicle.vehicleId,
+      driverId: driver.id,
+      customerId: selectedClient,
+      operatorId: localStorage.getItem('userID'),
+      serviceFeeId: selectedServiceFees,
+      
+    };
+
+    console.log(orderData);
+
+    setAuthToken(localStorage.getItem('authToken'));
+    await createServiceOrder(orderData);
+    alert('Orden creada satisfactoriamente.');
+    navigate('/orders')
+  } catch (error) {
+    console.error('Error al calcular la distancia o enviar la orden:', error);
+    alert('Hubo un error al intentar crear la orden.');
+  }
+};
+
 
   
   
@@ -171,11 +190,16 @@ const InputComponent = ({ setOrigin, setDestination, setDriver }) => {
           name: serviceFee.name,
         }));
         setServiceFees(serviceFeeData);
+        const clientData = await getAllClients();
+        setClients(clientData);
+
+
       } catch (error) {
         console.error('Error al obtener los gastos de servicio:', error);
         alert('Hubo un error al intentar obtener los gastos de servicio.');
       }
     };
+  
   
     fetchServiceFees();
   }, []);
@@ -284,6 +308,21 @@ const InputComponent = ({ setOrigin, setDestination, setDriver }) => {
         {drivers.map(driver => (
           <option key={driver.id} value={driver.id}>
             {driver.name} 
+          </option>
+        ))}
+      </select>
+      <select
+        value={selectedClient}
+        onChange={(e) => {
+          const clientId = e.target.value;
+          setSelectedClient(clientId);
+        }}
+        className="input-field"
+      >
+        <option value="">Seleccionar Cliente</option>
+        {clients.map(client => (
+          <option key={client.id_cliente} value={client.id_cliente}>
+            {client.nombre_completo_cliente} 
           </option>
         ))}
       </select>

@@ -14,7 +14,7 @@ const OrderDetails = () => {
   const [destination, setDestination] = useState(null);
   const [driver, setDriver] = useState(null);
   const [vehicle, setVehicle ] = useState(null);
-  const [serviceFee, setServiceFee] = useState(null);
+  const [serviceFee, setServiceFee] = useState();
 
   useEffect(() => {
     console.log("orderId desde useParams:", orderId);
@@ -29,21 +29,21 @@ const OrderDetails = () => {
 
           const vehicleData = await getVehicleById(serviceOrder.vehicleId);
           setVehicle(vehicleData.vehicle);
-
+          console.log("vehiculo de la orden:", vehicle);
           const serviceFeeIdData = await getServiceFeeById(serviceOrder.serviceFeeId);
           setServiceFee(serviceFeeIdData.serviceFee);
-
+          console.log("Fees de la orden:", serviceFee);
           setOrigin({
-            lat: serviceOrder.incidentLocationLat,
-            lng: serviceOrder.incidentLocationLon,
+            lat: serviceOrder.incidentLocationLatitude,
+            lng: serviceOrder.incidentLocationLongitude,
           });
           setDestination({
-            lat: serviceOrder.incidentLocationEndLat,
-            lng: serviceOrder.incidentLocationEndLon,
+            lat: serviceOrder.incidentLocationEndLatitude,
+            lng: serviceOrder.incidentLocationEndLongitude,
           });
           setDriver({
-            lat: serviceOrder.initialLocationDriverLat,
-            lng: serviceOrder.initialLocationDriverLon,
+            lat: serviceOrder.initialLocationDriverLatitude,
+            lng: serviceOrder.initialLocationDriverLongitude,
           });
         } else {
           alert("Error al obtener los detalles de la orden.");
@@ -68,16 +68,17 @@ const OrderDetails = () => {
         userId: localStorage.getItem('userID'),
         serviceOrderId: orderDetails.serviceOrderId,
         incidentDescription: orderDetails.incidentDescription,
-        state: "Cancelado",
-        initialLocationDriverLat: orderDetails.initialLocationDriverLat,
-        initialLocationDriverLon: orderDetails.initialLocationDriverLon,
-        incidentLocationLat: orderDetails.incidentLocationLat,
-        incidentLocationLon: orderDetails.incidentLocationLon,
-        incidentLocationEndLat: orderDetails.incidentLocationEndLat,
-        incidentLocationEndLon: orderDetails.incidentLocationEndLon,
+        statusServiceOrder: "Cancelado",
+        initialLocationDriverLatitude: orderDetails.initialLocationDriverLatitude,
+        initialLocationDriverLongitude: orderDetails.initialLocationDriverLongitude,
+        incidentLocationLatitude: orderDetails.incidentLocationLatitude,
+        incidentLocationLongitude: orderDetails.incidentLocationLongitude,
+        incidentLocationEndLatitude: orderDetails.incidentLocationEndLatitude,
+        incidentLocationEndLongitude: orderDetails.incidentLocationEndLongitude,
         incidentDistance: orderDetails.incidentDistance,
         customerVehicleDescription: orderDetails.customerVehicleDescription,
         incidentCost: orderDetails.incidentCost,
+        incidentDate: orderDetails.incidentDate,
         policyId: orderDetails.policyId,
         vehicleId: orderDetails.vehicleId,
         driverId: orderDetails.driverId,
@@ -126,7 +127,7 @@ const OrderDetails = () => {
             <strong>Póliza:</strong> <span>{orderDetails.policyId}</span>
           </div>
           <div className="order-info-item">
-            <strong>Servicio:</strong> <span>{serviceFee.name}</span>
+            <strong>Servicio:</strong> <span>{serviceFee?.name}</span>
           </div>
           <div className="order-info-item">
             <strong>Distancia Total:</strong> <span>{orderDetails.incidentDistance} km</span>
