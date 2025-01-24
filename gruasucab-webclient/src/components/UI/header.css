@@ -1,0 +1,40 @@
+.sbar {
+    background-color: #3E3E3E !important; /* Fondo oscuro */
+    color: #7C7C7C !important; /* Texto claro */
+    border-radius: 15px !important; /* Bordes redondeados */
+    border: none !important; /* Sin borde */
+  }
+  .App-header {
+    background-color: #343a40;
+    padding: 10px 0;
+  }
+  
+  .logo {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  
+  .search-bar {
+    width: 50%;
+  }
+  
+  .icons {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icons i {
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+  }
+  
+  .icons i:hover {
+    color: #fec526;
+    transform: scale(1.2);
+  }
+  
+  .icons i:active {
+    color: #cb9d1e;
+    transform: scale(1);
+  }
+  
