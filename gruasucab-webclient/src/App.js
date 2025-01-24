@@ -24,7 +24,7 @@ import UserForm from './components/User/AddUser/UserForm';
 import OrderDetails from './components/Order/OrderDetails';
 import VehicleDetail from './components/Vehicle/vehicleDetail';
 import EditVehicle from './components/Vehicle/editVehicle';
-import SupplierForm from './components/Suplier/supplierForm';
+import SupplierForm from './components/Providers/supplierForm';
 import Provider from './components/Providers/Providers';
 import AddServiceFee from './components/RoadServices/addServiceFee';
 import AddDepartment from './components/Department/AddDepartment';

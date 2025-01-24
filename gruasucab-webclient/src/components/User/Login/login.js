@@ -36,7 +36,6 @@ function Login({ onLogin, onLogout }) {
       if (user.role === "Trabajador" || user.role === "Proveedor") {
         try {
           setAuthToken(localStorage.getItem("authToken"));
-          if (user.role === "Trabajador") {
             try {  
               setAuthToken(localStorage.getItem("authToken"));
               await getWorkerById(localStorage.getItem('userID'));
@@ -46,21 +45,7 @@ function Login({ onLogin, onLogout }) {
                 console.log("Completar Trabajador");
                 navigate('/user-form');
               }
-            }
-          } else if (user.role === "Proveedor") {
-            try {
-              console.log("this",user.role);
-              setAuthToken(localStorage.getItem("authToken"));
-              await getProviderById(localStorage.getItem('userID'));
-              console.log(user.role);
-              navigate('/vehicle');
-            } catch (error) {
-              if (error.status === 500) {
-                console.log("Completar Proveedor");
-                navigate('/supplier-form');
-              }
-            }
-          } 
+            }         
         } catch (error) {
           if (error.status === 500) {
             console.log("Completar usuario");

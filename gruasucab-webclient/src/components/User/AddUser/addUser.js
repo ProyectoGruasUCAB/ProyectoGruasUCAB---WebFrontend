@@ -2,28 +2,61 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createUser, setAuthToken } from '../../../api/apiAuth';
+import { getAllDepartments } from '../../../api/apiDepartment';
+import { getAllSuppliers } from '../../../api/apiSuplier';
 
 const AddUser = () => {
     const { role } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState({
-        emailToCreate: '',
-    });
-
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-       
-        const userEmail = localStorage.getItem('userEmail');  
-        
-        setUser({
-            userEmail: userEmail,
+            userEmail: localStorage.getItem('userEmail'),
             userId: localStorage.getItem('userID'),
             emailToCreate: '',
             nameRole: role,
-            workplaceId: localStorage.getItem('userID'),
+            workplaceId: '',
+            position: 'Empty'
+    });
+
+    const [departments, setDepartments] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                const data = await getAllDepartments();
+                setDepartments(data.departments);
+            } catch (error) {
+                console.error('Error al obtener los departamentos:', error);
+            }
+        };
+
+        const fetchSuppliers = async () => {
+            try {
+                const data = await getAllSuppliers();
+                setSuppliers(data.suppliers);
+            } catch (error) {
+                console.error('Error al obtener los proveedores:', error);
+            }
+        };
+
+        if (role === 'Trabajador') {
+            fetchDepartments();
+        } else if (role === 'Conductor' || role === 'Proveedor') {
+            fetchSuppliers();
+        }
+
+        const userEmail = localStorage.getItem('userEmail');  
+        
+        setUser({
+            userEmail: localStorage.getItem('userEmail'),
+            userId: localStorage.getItem('userID'),
+            emailToCreate: '',
+            nameRole: role,
+            workplaceId: '',
+            position: ''
         });
-    }, [role]); // Se ejecuta cuando cambia el valor de `role`
+    }, [role]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,12 +72,15 @@ const AddUser = () => {
         try {
             const token = localStorage.getItem('authToken');
             setAuthToken(token);
+            console.log(user);
             await createUser(user);
             setUser((prevUser) => ({
                 ...prevUser,
                 emailToCreate: '',
+                position: '',
+                workplaceId: ''
             }));
-            setError(''); // Limpiar cualquier mensaje de error anterior
+            setError('');
             navigate("/orders");
         } catch (error) {
             console.error('Error al agregar el usuario:', error);
@@ -71,6 +107,60 @@ const AddUser = () => {
                                 required
                             />
                         </div>
+                        {role === 'Trabajador' && (
+                            <>
+                                <div className="mb-3">
+                                    <label htmlFor="departmentId" className="form-label">Departamento:</label>
+                                    <select
+                                        className="form-control"
+                                        id="departmentId"
+                                        name="workplaceId"
+                                        value={user.workplaceId}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Selecciona un departamento</option>
+                                        {departments.map(department => (
+                                            <option key={department.departmentId} value={department.departmentId}>
+                                                {department.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="position" className="form-label">Posición:</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="position"
+                                        name="position"
+                                        value={user.position}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </>
+                        )}
+                        {(role === 'Conductor' || role === 'Proveedor') && (
+                            <div className="mb-3">
+                                <label htmlFor="supplierId" className="form-label">Proveedor:</label>
+                                <select
+                                    className="form-control"
+                                    id="supplierId"
+                                    name="workplaceId"
+                                    value={user.workplaceId}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">Selecciona un proveedor</option>
+                                    {suppliers.map(supplier => (
+                                        <option key={supplier.supplierId} value={supplier.supplierId}>
+                                            {supplier.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className='d-flex justify-content-center'>
                             <button type="submit" className="btn btn-primary w-50">Agregar Usuario</button>

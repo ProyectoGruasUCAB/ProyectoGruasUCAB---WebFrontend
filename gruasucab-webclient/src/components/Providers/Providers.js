@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShowList from "../UI/showList";
 import { getAllSuppliers } from '../../api/apiSuplier';
 import { setAuthToken } from '../../api/apiAuth';
+import ShowListProviders from "./showListProviders";
 
 function Providers() {
   const [suppliers, setSuppliers] = useState([]);
@@ -41,7 +42,7 @@ function Providers() {
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
-        <ShowList title="Empresas" role="Empresa" initialItems={suppliers} />
+        <ShowListProviders title="Empresas" role="Empresa" initialItems={suppliers} />
       )}
     </div>
   );
