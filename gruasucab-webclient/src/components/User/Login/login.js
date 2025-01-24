@@ -29,6 +29,8 @@ function Login({ onLogin, onLogout }) {
       localStorage.setItem('userID', user.userID);
       localStorage.setItem('userEmail', user.userEmail);
       localStorage.setItem('role', user.role);
+      localStorage.setItem('workerId', user.workerId);
+      localStorage.setItem('workerName', user.workerName);
       setAuthToken(user.token);
       setUser(user); 
       onLogin(user);
@@ -38,8 +40,13 @@ function Login({ onLogin, onLogout }) {
           setAuthToken(localStorage.getItem("authToken"));
             try {  
               setAuthToken(localStorage.getItem("authToken"));
-              await getWorkerById(localStorage.getItem('userID'));
-              navigate('/orders');
+              if (user.role === "Trabajador") {
+                await getWorkerById(localStorage.getItem('userID'));
+                navigate('/orders');
+              } else {
+                await getProviderById(localStorage.getItem('userID'));
+                navigate('/vehicles');
+              }
             } catch (error) {
               if (error.status === 500) {
                 console.log("Completar Trabajador");

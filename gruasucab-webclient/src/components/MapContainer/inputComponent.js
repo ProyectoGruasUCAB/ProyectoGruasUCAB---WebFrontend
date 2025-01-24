@@ -12,7 +12,7 @@ import { getAllPolicies } from "../../api/apiPolicy";
 
 
 const driverLocations = [
-  { id: "9eda2bae-f43f-45cb-8e04-3449ffa5cdd4", lat: 10.5061, lng: -66.9146 },
+  { id: "1ec85f24-f238-4897-ab1c-8c1fc21fef68", lat: 10.5061, lng: -66.9146 },
   { id: "22222222-2222-2222-2222-222222222222", lat: 10.4806, lng: -66.9036 },
   { id: "33333333-3333-3333-3333-333333333333", lat: 10.4924, lng: -66.8459 },
 ];
@@ -141,7 +141,7 @@ const handleSubmit = async (e) => {
   
         const filteredPolicy = policyData.policies.find(p => p.clientId === selectedClient);
         setPolicy(filteredPolicy);
-        console.log(filteredPolicy);
+      console.log("Policy");  
     const orderData = {
       userEmail: localStorage.getItem('userEmail') || 'test@example.com',
       userId: localStorage.getItem('userID') || 'testUserID',
@@ -164,7 +164,7 @@ const handleSubmit = async (e) => {
       
     };
 
-    console.log(orderData);
+    console.log("orderData", orderData);
 
     setAuthToken(localStorage.getItem('authToken'));
     await createServiceOrder(orderData);

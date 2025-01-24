@@ -20,8 +20,8 @@ const UserForm = () => {
         medicalCertificateExpirationDate: null,
         driverLicense: null,
         driverLicenseExpirationDate: null,
-        position: '',
-        workplaceId: '' 
+        position: localStorage.getItem('workerName') || '',
+        workplaceId: localStorage.getItem('workerId') || ''
     });
     const [cedulaPrefix, setCedulaPrefix] = useState('V-'); // Variable aparte para el prefijo
     const [departments, setDepartments] = useState([]); // Lista de departamentos
@@ -55,6 +55,8 @@ const UserForm = () => {
             userEmail: localStorage.getItem('userEmail'),
             userId: localStorage.getItem('userID'),
             role: localStorage.getItem('role'),
+            position: localStorage.getItem('workerName') || '',
+            workplaceId: localStorage.getItem('workerId') || ''
         }));
     }, []);
 
@@ -80,7 +82,7 @@ const UserForm = () => {
             const formattedUser = {
                 ...user,
                 birthDate: formatDate(user.birthDate),
-                cedula: cedulaPrefix + user.cedula // Unir el prefijo y el número
+                cedula: cedulaPrefix + user.cedula
             };
             console.log(user);
             const response = await recordUserData(formattedUser);
@@ -183,44 +185,8 @@ const UserForm = () => {
                                 required
                             />
                         </div>
-                        {user.role === 'Trabajador' && (
-                            <div className="mb-3">
-                                <label htmlFor="position" className="form-label">Posición:</label>
-                                <select
-                                    className="form-control"
-                                    id="position"
-                                    name="position"
-                                    value={user.position}
-                                    onChange={handleUserChange}
-                                    required
-                                >
-                                    <option value="">Seleccione una posición</option>
-                                    <option value="Operador">Operador</option>
-                                </select>
-                            </div>
-                        )}
-                        <div className="mb-3">
-                            <label htmlFor="workplaceId" className="form-label">{user.role === 'Trabajador' ? 'Departamento' : 'Proveedor'}:</label>
-                            <select
-                                className="form-control"
-                                id="workplaceId"
-                                name="workplaceId"
-                                value={user.workplaceId}
-                                onChange={handleUserChange}
-                                required
-                            >
-                                <option value="">{user.role === 'Trabajador' ? 'Seleccione un departamento' : 'Seleccione un empresa'}</option>
-                                {user.role === 'Trabajador' ? (
-                                    departments.map((dept) => (
-                                        <option key={dept.departmentId} value={dept.departmentId}>{dept.name}</option>
-                                    ))
-                                ) : (
-                                    suppliers.map((supplier) => (
-                                        <option key={supplier.supplierId} value={supplier.supplierId}>{supplier.name}</option>
-                                    ))
-                                )}
-                            </select>
-                        </div>
+                    
+                        
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className='d-flex justify-content-center'>
                             <button type="submit" className="btn btn-primary w-50">Agregar Usuario</button>
