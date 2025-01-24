@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getVehicleById, updateVehicle } from '../../api/apiVehicle';
 import { setAuthToken } from '../../api/apiAuth';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 const EditVehicle = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [vehicle, setVehicle] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchVehicleData = async () => {
       try {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          setAuthToken(token);
+        } else {
+          throw new Error('No se encontró el token de autenticación');
+        }
         const vehicleData = await getVehicleById(id);
         setVehicle(vehicleData.vehicle);
       } catch (error) {
@@ -39,35 +47,41 @@ const EditVehicle = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
-      setAuthToken(localStorage.getItem('authToken'));  
-      const updatedVehicle = {
-            userEmail: localStorage.getItem('userEmail'),
-            userId: localStorage.getItem('userID'),
-            vehicleId: vehicle.vehicleId,
-            driverId: vehicle.driverId,
-            supplierId: vehicle.supplierId,
-            civilLiability: vehicle.civilLiability,
-            civilLiabilityExpirationDate: vehicle.civilLiabilityExpirationDate,
-            trafficLicense: vehicle.trafficLicense,
-            licensePlate: vehicle.licensePlate,
-            brand: vehicle.brand,
-            color: vehicle.color,
-            model: vehicle.model,
-            vehicleTypeId: vehicle.vehicleTypeId
-          
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        setAuthToken(token);
+      } else {
+        throw new Error('No se encontró el token de autenticación');
       }
+      const updatedVehicle = {
+        userEmail: localStorage.getItem('userEmail'),
+        userId: localStorage.getItem('userID'),
+        vehicleId: vehicle.vehicleId,
+        driverId: vehicle.driverId,
+        supplierId: vehicle.supplierId,
+        civilLiability: vehicle.civilLiability,
+        civilLiabilityExpirationDate: vehicle.civilLiabilityExpirationDate,
+        trafficLicense: vehicle.trafficLicense,
+        licensePlate: vehicle.licensePlate,
+        brand: vehicle.brand,
+        color: vehicle.color,
+        model: vehicle.model,
+        vehicleTypeId: vehicle.vehicleTypeId
+      };
       await updateVehicle(updatedVehicle);
       alert('Vehículo actualizado con éxito');
+      navigate(`/vehicle/${id}`);
     } catch (error) {
       console.error('Error al actualizar el vehículo:', error);
-      alert('Error al actualizar el vehículo');
+      setError('Error al actualizar el vehículo. Verifique sus permisos.');
+      alert('Error al actualizar el vehículo. Verifique sus permisos.');
     }
   };
 
   return (
     <Container>
       <h2>Editar Vehículo</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <Form onSubmit={handleSubmit}>
         <Row className="mb-3">
           <Col>

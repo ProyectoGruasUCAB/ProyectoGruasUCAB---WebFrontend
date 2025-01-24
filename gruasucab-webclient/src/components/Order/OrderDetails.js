@@ -6,6 +6,8 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import "./orderDetails.css";
 import { getVehicleById } from "../../api/apiVehicle";
 import { getServiceFeeById } from "../../api/apiServiceFee";
+import { getClientById } from "../../api/apiClient";
+import { getPolicyById } from "../../api/apiPolicy";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -15,6 +17,8 @@ const OrderDetails = () => {
   const [driver, setDriver] = useState(null);
   const [vehicle, setVehicle ] = useState(null);
   const [serviceFee, setServiceFee] = useState();
+  const [client, setClient] = useState(null);
+  const [policy, setPolicy] = useState(null);
 
   useEffect(() => {
     console.log("orderId desde useParams:", orderId);
@@ -29,10 +33,17 @@ const OrderDetails = () => {
 
           const vehicleData = await getVehicleById(serviceOrder.vehicleId);
           setVehicle(vehicleData.vehicle);
-          console.log("vehiculo de la orden:", vehicle);
+          
           const serviceFeeIdData = await getServiceFeeById(serviceOrder.serviceFeeId);
           setServiceFee(serviceFeeIdData.serviceFee);
-          console.log("Fees de la orden:", serviceFee);
+          
+          const clientData = await getClientById(serviceOrder.customerId);
+          setClient(clientData);
+          console.log("Cliente", clientData);
+          
+          const policyIdData = await getPolicyById(serviceOrder.policyId);
+          setPolicy(policyIdData.policy);
+
           setOrigin({
             lat: serviceOrder.incidentLocationLatitude,
             lng: serviceOrder.incidentLocationLongitude,
@@ -58,6 +69,10 @@ const OrderDetails = () => {
       fetchOrderDetails();
     }
   }, [orderId]);
+
+  useEffect(() => {
+    console.log("Cliente actualizado:", client);
+  }, [client]);
 
   const cancelOrder = async () => {
     console.log("Cancelling order: ", orderDetails);
@@ -118,13 +133,13 @@ const OrderDetails = () => {
             <strong>Estado:</strong> <span>{orderDetails.statusServiceOrder}</span>
           </div>
           <div className="order-info-item">
-            <strong>Cliente:</strong> <span>{orderDetails.customerId}</span>
+            <strong>Cliente:</strong> <span>{client?.nombre_completo_cliente}</span>
           </div>
           <div className="order-info-item">
             <strong>Grua:</strong> <span>{vehicle?.brand} {vehicle?.model} {vehicle?.color}</span>
           </div>
           <div className="order-info-item">
-            <strong>Póliza:</strong> <span>{orderDetails.policyId}</span>
+            <strong>Póliza:</strong> <span>{policy?.name}</span>
           </div>
           <div className="order-info-item">
             <strong>Servicio:</strong> <span>{serviceFee?.name}</span>

@@ -14,8 +14,8 @@ function ShowListCustomer({ title, role, initialItems }) {
     }
   }, [initialItems]);
 
-  const handleUserDetail = (id) => {
-    navigate(`/Client|/${id}`);
+  const handleClientDetail = (id) => {
+    navigate(`/client/${id}`);
   };
   
   const handleEdit = (id) => {
@@ -61,7 +61,7 @@ function ShowListCustomer({ title, role, initialItems }) {
                       <Button
                         variant="info"
                         className="ms-2"
-                        onClick={() => handleUserDetail(item.id_cliente)}
+                        onClick={() => handleClientDetail(item.id_cliente)}
                       >
                         Ver
                       </Button>

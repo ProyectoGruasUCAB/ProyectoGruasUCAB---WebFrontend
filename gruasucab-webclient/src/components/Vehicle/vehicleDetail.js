@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import OrderListVehicle from '../Order/OrderList'; // Importa el componente OrderList
+import OrderListVehicle from '../Order/OrderListVehicle'; // Importa el componente OrderListVehicle
 import { getVehicleById, updateVehicle } from '../../api/apiVehicle'; // Añade la función getDrivers
-import { getAllOrders } from '../../api/apiServiceOrder';
+import { getOrdersByVehicleId } from '../../api/apiServiceOrder';
 import { getAllDrivers } from '../../api/apiUser';
 import { Container, Row, Col } from 'react-bootstrap'; // Importa Container, Row y Col
 
@@ -11,7 +11,7 @@ const VehicleDetail = () => {
   const [vehicle, setVehicle] = useState(null);
   const [orders, setOrders] = useState([]);
   const [drivers, setDrivers] = useState([]);
-  const [selectedDriver, setSelectedDriver] = useState(vehicle?.driverId || '');
+  const [selectedDriver, setSelectedDriver] = useState('');
 
   useEffect(() => {
     const fetchVehicleData = async () => {
@@ -19,10 +19,10 @@ const VehicleDetail = () => {
         const vehicleData = await getVehicleById(id);
         setVehicle(vehicleData.vehicle);
         setSelectedDriver(vehicleData.vehicle.driverId || '');
-        console.log("Vehiculo:", vehicle);
+        console.log("Vehiculo:", vehicleData.vehicle);
       } catch (error) {
         console.error('Error al cargar los datos:', error);
-        alert('Error al cargar datos del usuario');
+        alert('Error al cargar datos del vehículo');
       }
     };
 
@@ -33,16 +33,19 @@ const VehicleDetail = () => {
 
   useEffect(() => {
     const fetchAllOrders = async () => {
-      try {
-        const orderList = await getAllOrders();
-        setOrders(orderList.serviceOrders);
-      } catch (error) {
-        console.error('Error al cargar las órdenes:', error);
-        alert('Error al cargar las órdenes');
+      if (vehicle) {
+        try {
+          const orderList = await getOrdersByVehicleId(vehicle.vehicleId);
+          setOrders(orderList.serviceOrders);
+          console.log("Órdenes:", orderList.serviceOrders);
+        } catch (error) {
+          console.error('Error al cargar las órdenes:', error);
+        }
       }
     };
+
     fetchAllOrders();
-  }, []);
+  }, [vehicle]);
 
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -93,8 +96,6 @@ const VehicleDetail = () => {
     }
   };
 
-  const filteredOrders = orders.filter(order => order.vehicleId === vehicle.vehicleId);
-
   return (
     <Container>
       <h2>Detalles del Vehiculo</h2>
@@ -110,7 +111,7 @@ const VehicleDetail = () => {
             value={selectedDriver}
             onChange={handleDriverChange}
             className="input-field"
-            style={{width: "300px"}}
+            style={{ width: "300px" }}
           >
             <option value="" disabled={selectedDriver === ''}>Asignar Conductor</option>
             {drivers.map(driver => (
@@ -122,7 +123,7 @@ const VehicleDetail = () => {
         </Col>
       </Row>
       
-      <OrderListVehicle orders={filteredOrders} id={vehicle.vehicleId}/>
+      <OrderListVehicle orders={orders} id={vehicle.vehicleId} />
       
     </Container>
   );

@@ -37,9 +37,9 @@ export const updateVehicle = async (vehicleData) => {
   }
 }
 
-export const createVehicle = async () => {
+export const createVehicle = async (vehicle) => {
   try {
-    const response = await apiClient.post('/Vehicle/CreateVehicle');
+    const response = await apiClient.post('/Vehicle/CreateVehicle', vehicle);
     if (response.status === 200) {
       return response.data;
     }

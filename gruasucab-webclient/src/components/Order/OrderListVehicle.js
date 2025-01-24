@@ -2,23 +2,11 @@ import React, { useEffect } from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-const OrderListVehicle = ({ orders, id }) => {
+const OrderListVehicle = ({ orders }) => {
   const navigate = useNavigate();
+  const orderData = orders;
 
-  useEffect(() => {
-    console.log('Component mounted');
-    console.log('Orders:', orders);
-    console.log('Vehicle ID:', id);
-  }, [orders, id]);
-
-  // Filtro de órdenes (asegurando que el tipo de datos sea consistente)
-  const filteredOrders = orders.filter((order) => {
-    const isMatch = order.vehicleId == id; // Cambiado a '==' para evitar problemas de tipo
-    console.log(`Comparando: ${order.vehicleId} == ${id} -> ${isMatch}`);
-    return isMatch;
-  });
-
-  console.log('Filtered Orders:', filteredOrders);
+  console.log('Filtered Orders:', orderData);
 
   const handleViewClick = (orderId) => {
     console.log('Order ID clicked:', orderId);
@@ -29,8 +17,8 @@ const OrderListVehicle = ({ orders, id }) => {
     <div>
       <h2>Lista de Órdenes de Servicio</h2>
       <ListGroup>
-        {filteredOrders.length > 0 ? (
-          filteredOrders.map(order => (
+        {orderData.length > 0 ? (
+          orderData.map(order => (
             <ListGroup.Item
               key={order.serviceOrderId}
               className="d-flex justify-content-between align-items-center"

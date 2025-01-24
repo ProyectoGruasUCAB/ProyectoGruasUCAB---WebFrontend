@@ -43,7 +43,6 @@ const AddVehicle = () => {
                 console.error('Error al obtener los tipos de vehículos:', error);
             }
         };
-        
 
         fetchVehicleTypes();
     }, []);
@@ -68,11 +67,16 @@ const AddVehicle = () => {
                 civilLiabilityExpirationDate: formatDate(vehicle.civilLiabilityExpirationDate),
             };
             console.log(formattedVehicle);
-            await createVehicle(formattedVehicle);
+
+            await createVehicle(formattedVehicle, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
             setVehicle({
                 userEmail: localStorage.getItem('userEmail'),
                 userId: localStorage.getItem('userID'),
-                supplierId: '',
                 civilLiability: '',
                 civilLiabilityExpirationDate: '',
                 trafficLicense: '',
